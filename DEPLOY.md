@@ -23,6 +23,7 @@ mvn clean install -DskipTests
 免费、私有，与GitHub集成：
 
 #### 准备工作：
+
 1. 创建GitHub Personal Access Token
 2. 设置环境变量：
    ```bash
@@ -30,6 +31,7 @@ mvn clean install -DskipTests
    ```
 
 #### 发布命令：
+
 ```bash
 # 使用脚本发布
 ./deploy.sh github
@@ -39,7 +41,9 @@ mvn -f pom-github.xml clean deploy -DskipTests
 ```
 
 #### 使用方式：
+
 在项目的pom.xml中添加：
+
 ```xml
 <repositories>
     <repository>
@@ -62,6 +66,7 @@ mvn -f pom-github.xml clean deploy -DskipTests
 需要审核，但所有人都可以使用：
 
 #### 准备工作：
+
 1. 注册Sonatype账号
 2. 生成GPG密钥：
    ```bash
@@ -80,6 +85,7 @@ mvn -f pom-github.xml clean deploy -DskipTests
    ```
 
 #### 发布命令：
+
 ```bash
 # 使用脚本发布
 ./deploy.sh central
@@ -89,6 +95,7 @@ mvn -f pom-central.xml clean deploy -P release -DskipTests
 ```
 
 #### 发布后操作：
+
 1. 访问 https://s01.oss.sonatype.org/
 2. 搜索你的artifact
 3. 检查并手动release
@@ -118,12 +125,14 @@ mvn -f pom-central.xml clean deploy -P release -DskipTests
 ## 版本管理
 
 ### 发布前检查：
+
 - [ ] 更新版本号（去掉SNAPSHOT）
 - [ ] 更新CHANGELOG.md
 - [ ] 运行所有测试
 - [ ] 检查文档完整性
 
 ### 版本号格式：
+
 - 开发版本：`1.0.0-SNAPSHOT`
 - 稳定版本：`1.0.0`
 - 补丁版本：`1.0.1`
@@ -133,16 +142,19 @@ mvn -f pom-central.xml clean deploy -P release -DskipTests
 ## 故障排除
 
 ### GitHub Packages发布失败：
+
 - 检查GITHUB_TOKEN是否设置
 - 检查仓库名称是否正确
 - 确保有push权限
 
 ### Maven Central发布失败：
+
 - 检查GPG密钥配置
 - 检查settings.xml配置
 - 确保版本号不包含SNAPSHOT
 
 ### 编译失败：
+
 - 检查Java版本（需要17+）
 - 检查依赖版本冲突
 - 运行`mvn dependency:tree`查看依赖树

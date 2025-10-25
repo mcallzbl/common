@@ -4,21 +4,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Maven multi-module common library project (`common-parent`) containing shared components for Spring Boot applications. The project provides standardized response wrapping mechanisms and auto-configuration utilities.
+This is a Maven multi-module common library project (`common-parent`) containing shared components for Spring Boot
+applications. The project provides standardized response wrapping mechanisms and auto-configuration utilities.
 
 ## Architecture
 
 ### Module Structure
+
 - **common-parent**: Root Maven project with dependency management
 - **common-spring**: Spring Boot integration module containing:
-  - Unified response wrapper system (`@ResponseWrapper` annotation)
-  - Global response body advice (`GlobalResponseWrapper`)
-  - Common result transfer DTO (`CommonResultTransferDTO`)
-  - Business exception handling (`BusinessException`)
-  - Standardized status codes (`ResultCode` enum)
+    - Unified response wrapper system (`@ResponseWrapper` annotation)
+    - Global response body advice (`GlobalResponseWrapper`)
+    - Common result transfer DTO (`CommonResultTransferDTO`)
+    - Business exception handling (`BusinessException`)
+    - Standardized status codes (`ResultCode` enum)
 
 ### Response Wrapping System
-Based on the Sora project architecture, all controller responses can be automatically wrapped using the `@ResponseWrapper` annotation at class or method level. The system provides:
+
+Based on the Sora project architecture, all controller responses can be automatically wrapped using the
+`@ResponseWrapper` annotation at class or method level. The system provides:
 
 - **Standard Response Format**:
   ```json
@@ -31,9 +35,10 @@ Based on the Sora project architecture, all controller responses can be automati
   ```
 
 - **Status Code Strategy**:
-  - HTTP status codes controlled via `httpStatus` field
-  - Business logic status codes using `ResultCode` enum
-  - Separate error code ranges for different business domains (user: 1001+, captcha: 2001+, token: 3001+, features: 4001+)
+    - HTTP status codes controlled via `httpStatus` field
+    - Business logic status codes using `ResultCode` enum
+    - Separate error code ranges for different business domains (user: 1001+, captcha: 2001+, token: 3001+, features:
+      4001+)
 
 ## Build Commands
 
@@ -66,6 +71,7 @@ mvn clean package -DskipTests
 ## Dependencies
 
 The project uses managed dependencies for:
+
 - Lombok 1.18.42 (annotation processing)
 - Spring Boot starter dependencies (to be added as needed)
 

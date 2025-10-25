@@ -5,18 +5,18 @@ import com.mcallzbl.common.Result;
 import com.mcallzbl.common.ResultCode;
 import com.mcallzbl.common.annotation.NoResponseWrapper;
 import com.mcallzbl.common.annotation.ResponseWrapper;
-import lombok.Data;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.List;
 

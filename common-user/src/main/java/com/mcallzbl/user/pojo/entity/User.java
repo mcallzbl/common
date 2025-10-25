@@ -1,4 +1,4 @@
-package com.mcallzbl.user.entity;
+package com.mcallzbl.user.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.mcallzbl.common.enums.DeleteStatus;
