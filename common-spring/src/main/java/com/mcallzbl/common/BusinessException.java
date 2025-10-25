@@ -65,6 +65,13 @@ public class BusinessException extends RuntimeException {
         this(HttpStatus.OK, resultCode);
     }
 
+    /**
+     * 创建业务异常（仅自定义消息，使用默认失败状态码）
+     */
+    public BusinessException(String message) {
+        this(HttpStatus.OK, ResultCode.FAILED.getCode(), message);
+    }
+
     public BusinessException(ResultCode resultCode, Object data) {
         this(HttpStatus.OK, resultCode, data);
     }
@@ -229,7 +236,7 @@ public class BusinessException extends RuntimeException {
      * 创建业务异常（仅自定义消息，使用默认失败状态码）
      */
     public static BusinessException of(String message) {
-        return new BusinessException(HttpStatus.OK, ResultCode.FAILED.getCode(), message);
+        return new BusinessException(message);
     }
 
     /**
