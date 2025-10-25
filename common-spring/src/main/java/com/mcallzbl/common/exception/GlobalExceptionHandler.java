@@ -6,6 +6,7 @@ import com.mcallzbl.common.annotation.ResponseWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -157,5 +158,21 @@ public class GlobalExceptionHandler {
                 .orElse("参数绑定失败");
 
         return Result.validationFailed(errorMessage);
+    }
+
+    /**
+     * 处理资源未找到异常
+     */
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<Object> handleNoResourceFoundException(
+            org.springframework.web.servlet.resource.NoResourceFoundException e,
+            HttpServletRequest request) {
+        log.error("Resource Not Found - Request URI: {} - Resource Path: {}",
+                request.getRequestURI(), e.getResourcePath(), e);
+
+        // 返回404页面
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .contentType(org.springframework.http.MediaType.TEXT_HTML)
+                .body("<script>window.location.href='/error/404.html'</script>");
     }
 }

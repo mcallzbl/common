@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 /**
  * 通用结果传输DTO
  * 用于最终的API响应传输
@@ -34,7 +36,7 @@ public class CommonResultTransferDTO<T> {
     /**
      * 时间戳
      */
-    private long timestamp;
+    private Instant timestamp;
 
     /**
      * 从CommonResult创建传输DTO
@@ -44,7 +46,7 @@ public class CommonResultTransferDTO<T> {
                 .code(result.getCode())
                 .message(result.getMessage())
                 .data(result.getData())
-                .timestamp(result.getTimestamp())
+                .timestamp(Instant.now())
                 .build();
     }
 
@@ -56,7 +58,7 @@ public class CommonResultTransferDTO<T> {
                 .code(200)
                 .message("操作成功")
                 .data(data)
-                .timestamp(System.currentTimeMillis())
+                .timestamp(Instant.now())
                 .build();
     }
 
@@ -68,7 +70,7 @@ public class CommonResultTransferDTO<T> {
                 .code(200)
                 .message(message)
                 .data(data)
-                .timestamp(System.currentTimeMillis())
+                .timestamp(Instant.now())
                 .build();
     }
 
@@ -80,7 +82,7 @@ public class CommonResultTransferDTO<T> {
                 .code(code)
                 .message(message)
                 .data(null)
-                .timestamp(System.currentTimeMillis())
+                .timestamp(Instant.now())
                 .build();
     }
 
@@ -92,7 +94,7 @@ public class CommonResultTransferDTO<T> {
                 .code(code)
                 .message(message)
                 .data(data)
-                .timestamp(System.currentTimeMillis())
+                .timestamp(Instant.now())
                 .build();
     }
 }

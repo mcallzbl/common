@@ -12,10 +12,10 @@ public class Result<T> {
     private int code;
     private String message;
     private T data;
-    private long timestamp;
+//    private long timestamp;
 
     public Result() {
-        this.timestamp = System.currentTimeMillis();
+//        this.timestamp = System.currentTimeMillis();
         this.httpStatus = HttpStatus.OK.value();
     }
 
@@ -24,7 +24,7 @@ public class Result<T> {
         this.code = code;
         this.message = message;
         this.data = data;
-        this.timestamp = System.currentTimeMillis();
+//        this.timestamp = System.currentTimeMillis();
     }
 
     // ==================== 成功返回方法 ====================
