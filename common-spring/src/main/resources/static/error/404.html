@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>404 - 页面未找到</title>
     <style>
         * {
@@ -100,8 +100,12 @@
         }
 
         @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
         }
 
         .scan-line {
@@ -115,8 +119,12 @@
         }
 
         @keyframes scan {
-            0% { top: 30px; }
-            100% { top: calc(100% - 2px); }
+            0% {
+                top: 30px;
+            }
+            100% {
+                top: calc(100% - 2px);
+            }
         }
 
         .glitch {
@@ -148,31 +156,75 @@
         }
 
         @keyframes glitch-anim {
-            0% { clip: rect(10px, 9999px, 25px, 0); }
-            10% { clip: rect(40px, 9999px, 60px, 0); }
-            20% { clip: rect(5px, 9999px, 15px, 0); }
-            30% { clip: rect(80px, 9999px, 120px, 0); }
-            40% { clip: rect(30px, 9999px, 50px, 0); }
-            50% { clip: rect(60px, 9999px, 80px, 0); }
-            60% { clip: rect(15px, 9999px, 35px, 0); }
-            70% { clip: rect(90px, 9999px, 110px, 0); }
-            80% { clip: rect(20px, 9999px, 40px, 0); }
-            90% { clip: rect(70px, 9999px, 90px, 0); }
-            100% { clip: rect(50px, 9999px, 70px, 0); }
+            0% {
+                clip: rect(10px, 9999px, 25px, 0);
+            }
+            10% {
+                clip: rect(40px, 9999px, 60px, 0);
+            }
+            20% {
+                clip: rect(5px, 9999px, 15px, 0);
+            }
+            30% {
+                clip: rect(80px, 9999px, 120px, 0);
+            }
+            40% {
+                clip: rect(30px, 9999px, 50px, 0);
+            }
+            50% {
+                clip: rect(60px, 9999px, 80px, 0);
+            }
+            60% {
+                clip: rect(15px, 9999px, 35px, 0);
+            }
+            70% {
+                clip: rect(90px, 9999px, 110px, 0);
+            }
+            80% {
+                clip: rect(20px, 9999px, 40px, 0);
+            }
+            90% {
+                clip: rect(70px, 9999px, 90px, 0);
+            }
+            100% {
+                clip: rect(50px, 9999px, 70px, 0);
+            }
         }
 
         @keyframes glitch-anim2 {
-            0% { clip: rect(25px, 9999px, 50px, 0); }
-            10% { clip: rect(5px, 9999px, 20px, 0); }
-            20% { clip: rect(60px, 9999px, 80px, 0); }
-            30% { clip: rect(35px, 9999px, 55px, 0); }
-            40% { clip: rect(10px, 9999px, 30px, 0); }
-            50% { clip: rect(75px, 9999px, 95px, 0); }
-            60% { clip: rect(45px, 9999px, 65px, 0); }
-            70% { clip: rect(85px, 9999px, 105px, 0); }
-            80% { clip: rect(15px, 9999px, 35px, 0); }
-            90% { clip: rect(55px, 9999px, 75px, 0); }
-            100% { clip: rect(40px, 9999px, 60px, 0); }
+            0% {
+                clip: rect(25px, 9999px, 50px, 0);
+            }
+            10% {
+                clip: rect(5px, 9999px, 20px, 0);
+            }
+            20% {
+                clip: rect(60px, 9999px, 80px, 0);
+            }
+            30% {
+                clip: rect(35px, 9999px, 55px, 0);
+            }
+            40% {
+                clip: rect(10px, 9999px, 30px, 0);
+            }
+            50% {
+                clip: rect(75px, 9999px, 95px, 0);
+            }
+            60% {
+                clip: rect(45px, 9999px, 65px, 0);
+            }
+            70% {
+                clip: rect(85px, 9999px, 105px, 0);
+            }
+            80% {
+                clip: rect(15px, 9999px, 35px, 0);
+            }
+            90% {
+                clip: rect(55px, 9999px, 75px, 0);
+            }
+            100% {
+                clip: rect(40px, 9999px, 60px, 0);
+            }
         }
 
         @media (max-width: 768px) {
@@ -192,26 +244,27 @@
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <div class="scan-line"></div>
-        <div class="content">
-            <div class="error-code glitch">404</div>
-            <div class="error-line">
-                <span class="prompt">$</span> <span class="command">curl</span> <span class="path">-X GET /api/endpoint</span>
-            </div>
-            <div class="error-line">
-                <span class="error">ERROR 404: API_ENDPOINT_NOT_FOUND</span>
-            </div>
-            <div class="error-line">
-                <span class="prompt">></span> API接口不存在
-            </div>
-            <div class="error-line">
-                <span class="prompt">></span> 请检查API文档确认正确的接口地址
-            </div>
-            <div class="error-line">
-                <span class="prompt">></span> 建议检查: URL路径、HTTP方法、接口版本<span class="cursor"></span>
-            </div>
+<div class="terminal">
+    <div class="scan-line"></div>
+    <div class="content">
+        <div class="error-code glitch">404</div>
+        <div class="error-line">
+            <span class="prompt">$</span> <span class="command">curl</span> <span
+                class="path">-X GET /api/endpoint</span>
+        </div>
+        <div class="error-line">
+            <span class="error">ERROR 404: API_ENDPOINT_NOT_FOUND</span>
+        </div>
+        <div class="error-line">
+            <span class="prompt">></span> API接口不存在
+        </div>
+        <div class="error-line">
+            <span class="prompt">></span> 请检查API文档确认正确的接口地址
+        </div>
+        <div class="error-line">
+            <span class="prompt">></span> 建议检查: URL路径、HTTP方法、接口版本<span class="cursor"></span>
         </div>
     </div>
+</div>
 </body>
 </html>
