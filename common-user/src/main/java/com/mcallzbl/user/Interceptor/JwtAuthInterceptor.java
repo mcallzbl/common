@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.io.IOException;
+
 /**
  * @author mcallzbl
  * @version 1.0
@@ -44,7 +46,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
             Long userId = Long.valueOf(jwtUtil.extractSubject(token));
             User user = userService.getUserById(userId);
 
-            if (user == null || !user.isActive()) {
+            if (user == null || user.isInActive()) {
                 log.warn("JWT认证失败：用户不存在或状态异常。用户ID: {}", userId);
                 sendUnauthorizedError(response, "用户不存在或状态异常");
                 return false;
@@ -64,7 +66,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
         }
     }
 
-    private void sendUnauthorizedError(HttpServletResponse response, String message) throws java.io.IOException {
+    private void sendUnauthorizedError(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().write(String.format("{\"code\": 401, \"message\": \"%s\"}", message));
@@ -92,7 +94,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
         // 1. 从Authorization header获取
         String authHeader = request.getHeader(AuthConstants.AUTHORIZATION);
         if (StringUtils.hasText(authHeader) && authHeader.startsWith(AuthConstants.BEARER)) {
-            return authHeader.substring(7);
+            return authHeader.substring(AuthConstants.BEARER_LENGTH);
         }
 
         // 2. 从请求参数获取（用于某些特殊场景）

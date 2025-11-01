@@ -1,15 +1,14 @@
 package com.mcallzbl.user.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.mcallzbl.common.BaseEntity;
 import com.mcallzbl.common.enums.DeleteStatus;
 import com.mcallzbl.user.enums.Gender;
 import com.mcallzbl.user.enums.UserStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -20,12 +19,13 @@ import java.time.LocalDate;
  * @author mcallzbl
  * @since 2025-10-25
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @TableName("user")
-public class User {
+public class User extends BaseEntity {
 
     /**
      * 用户ID，主键
@@ -150,14 +150,14 @@ public class User {
     /**
      * 创建时间
      */
-    @TableField(value = "created_time")
-    private Instant createdTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField(value = "updated_time")
-    private Instant updatedTime;
+//    @TableField(value = "created_time", fill = FieldFill.INSERT)
+//    private Instant createdTime;
+//
+//    /**
+//     * 更新时间
+//     */
+//    @TableField(value = "updated_time", fill = FieldFill.INSERT_UPDATE)
+//    private Instant updatedTime;
 
     /**
      * 软删除用户
@@ -171,8 +171,8 @@ public class User {
     /**
      * 检查用户是否正常状态
      */
-    public boolean isActive() {
-        return status == UserStatus.NORMAL && !deleteStatus.isDeleted();
+    public boolean isInActive() {
+        return status != UserStatus.NORMAL || deleteStatus.isDeleted();
     }
 
     /**

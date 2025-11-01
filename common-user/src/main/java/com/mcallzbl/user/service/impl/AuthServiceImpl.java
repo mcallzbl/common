@@ -10,6 +10,8 @@ import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
 import com.mcallzbl.user.service.AuthService;
 import com.mcallzbl.user.service.EmailVerificationService;
 import com.mcallzbl.user.service.UserService;
+import com.mcallzbl.user.context.IpContext;
+import com.mcallzbl.user.utils.IpUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User login(LoginRequest loginRequest) {
+        // 获取当前请求的IP地址（从拦截器设置的ThreadLocal中获取）
+        String clientIp = IpContext.getIpOrDefault("127.0.0.1");
+        log.info("用户登录尝试 - 邮箱: {}, IP地址: {}", loginRequest.getEmail(), clientIp);
+
         User user;
         // 根据密码或验证码是否存在来判断登录方式
         if (StringUtils.hasText(loginRequest.getVerificationCode())) {
@@ -41,6 +47,19 @@ public class AuthServiceImpl implements AuthService {
         } else {
             throw new BusinessException(ResultCode.VALIDATION_FAILED, "验证码必须提供");
         }
+
+        // 更新用户登录信息
+        user.updateLoginInfo(clientIp);
+
+        // 保存到数据库
+        int updateResult = userMapper.updateById(user);
+        if (updateResult > 0) {
+            log.info("用户登录成功 - userId: {}, 邮箱: {}, 登录IP: {}, 登录次数: {}",
+                    user.getId(), user.getEmail(), clientIp, user.getLoginCount());
+        } else {
+            log.warn("更新用户登录信息失败 - userId: {}", user.getId());
+        }
+
         return user;
     }
 
@@ -50,10 +69,10 @@ public class AuthServiceImpl implements AuthService {
                 loginDTO.getVerificationCode(),
                 VerificationEmailRequest.Purpose.LOGIN
         );
-
-        if (!isCodeValid) {
-            throw new BusinessException(ResultCode.EMAIL_VERIFICATION_CODE_ERROR, "邮箱验证码错误或已过期");
-        }
+// TODO 屏蔽邮件验证码验证
+//        if (!isCodeValid) {
+//            throw new BusinessException(ResultCode.EMAIL_VERIFICATION_CODE_ERROR, "邮箱验证码错误或已过期");
+//        }
 
         User user = userMapper.selectByEmail(loginDTO.getEmail());
 
@@ -66,9 +85,10 @@ public class AuthServiceImpl implements AuthService {
             }
             log.info("用户自动注册成功：userId={}, email={}", user.getId(), user.getEmail());
         }
-        if (!user.isActive()) {
+        if (user.isInActive()) {
             throw new BusinessException("用户已被禁用");
         }
+
         return user;
     }
 

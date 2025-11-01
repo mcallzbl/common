@@ -1,6 +1,7 @@
 package com.mcallzbl.user.config;
 
 import com.mcallzbl.user.Interceptor.JwtAuthInterceptor;
+import com.mcallzbl.user.interceptor.IpInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private final JwtAuthInterceptor jwtAuthInterceptor;
+    private final IpInterceptor ipInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -36,6 +38,15 @@ public class WebConfig implements WebMvcConfigurer {
                         "/actuator/**"              // Spring Boot Actuator不拦截
                 )
                 .order(1); // 设置优先级
+
+        // IP地址拦截器 - 优先级最高，为所有请求设置IP上下文
+        registry.addInterceptor(ipInterceptor)
+                .addPathPatterns("/**") // 拦截所有请求
+                .excludePathPatterns(
+                        "/error",                   // 错误页面不拦截
+                        "/actuator/**"              // Spring Boot Actuator不拦截
+                )
+                .order(0); // 最高优先级，确保在其他拦截器之前执行
 
     }
 }

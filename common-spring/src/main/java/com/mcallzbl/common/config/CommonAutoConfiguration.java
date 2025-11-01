@@ -96,4 +96,14 @@ public class CommonAutoConfiguration {
         log.info("注册I18nBusinessException Bean（国际化异常处理器）");
         return new I18nBusinessException(commonI18NUtils);
     }
+
+    /**
+     *  注册InstantAutoFillHandler
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    public InstantAutoFillHandler  instantAutoFillHandler() {
+        log.info("注册InstantAutoFillHandler");
+        return new InstantAutoFillHandler();
+    }
 }
