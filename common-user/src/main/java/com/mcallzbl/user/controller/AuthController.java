@@ -2,6 +2,7 @@ package com.mcallzbl.user.controller;
 
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.annotation.ResponseWrapper;
+import com.mcallzbl.user.config.SessionConfig;
 import com.mcallzbl.user.constants.JwtClaimsConstant;
 import com.mcallzbl.user.pojo.request.LoginRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
@@ -12,6 +13,7 @@ import com.mcallzbl.user.service.EmailVerificationService;
 import com.mcallzbl.user.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mcallzbl.user.constants.AuthConstants.REFRESH_TOKEN;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -33,9 +37,11 @@ import java.util.Map;
 public class AuthController {
 
     private final JwtUtil jwtUtil;
+    private final SessionConfig sessionConfig;
     private final AuthService authService;
     private final EmailVerificationService emailVerificationService;
 
+    @ResponseWrapper
     @PostMapping("/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest,
                                HttpServletResponse response) {
@@ -47,6 +53,15 @@ public class AuthController {
         }
         val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
         val refreshTokenInfo = jwtUtil.generateRefreshToken(String.valueOf(user.getId()), null);
+
+        Cookie refreshCookie = new Cookie(REFRESH_TOKEN, refreshTokenInfo.getToken());
+        refreshCookie.setMaxAge((int) jwtUtil.getRefreshTokenExpirationSeconds());
+        refreshCookie.setPath("/");
+        refreshCookie.setDomain(sessionConfig.getDomain());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(sessionConfig.isSecure());
+        response.addCookie(refreshCookie);
+
         return LoginResponse.builder()
                 .accessToken(accessTokenInfo.getToken())
                 .refreshToken(refreshTokenInfo.getToken())
