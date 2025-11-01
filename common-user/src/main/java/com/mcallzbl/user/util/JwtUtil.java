@@ -1,12 +1,14 @@
 package com.mcallzbl.user.util;
 
 import com.mcallzbl.common.BusinessException;
+import com.mcallzbl.user.pojo.dto.TokenInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -41,14 +43,14 @@ public class JwtUtil {
     private long refreshExpiration;
 
     /**
-     * 生成访问令牌（Access Token）
-     * 调用方自行构建claims
+     * 生成访问令牌信息（Access Token Info）
+     * 调用方自行构建claims，返回token和过期时间
      *
      * @param subject 主题（通常是用户ID或标识符）
      * @param claims 自定义声明
-     * @return 访问令牌
+     * @return TokenInfo对象
      */
-    public String generateAccessToken(String subject, Map<String, Object> claims) {
+    public TokenInfo generateAccessToken(String subject, Map<String, Object> claims) {
         if (claims == null) {
             claims = new java.util.HashMap<>();
         }
@@ -57,41 +59,56 @@ public class JwtUtil {
         claims.put("jti", UUID.randomUUID().toString());
         claims.put("iat", Instant.now().getEpochSecond());
         claims.put("type", "access_token");
-
-        return Jwts.builder()
+        val expiration = System.currentTimeMillis() + jwtExpiration;
+        String token = Jwts.builder()
                 .subject(subject)
                 .issuer(issuer)
                 .claims(claims)
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .expiration(new Date(expiration))
                 .signWith(getSigningKey())
                 .compact();
+
+        return TokenInfo.builder()
+                .token(token)
+                .expiration(expiration)
+                .expiresIn(getAccessTokenExpirationSeconds())
+                .type("access_token")
+                .build();
     }
 
     /**
-     * 生成刷新令牌（Refresh Token）
-     * 调用方自行构建claims
+     * 生成刷新令牌信息（Refresh Token Info）
+     * 调用方自行构建claims，返回token和过期时间
      *
      * @param subject 主题（通常是用户ID或标识符）
      * @param claims 自定义声明
-     * @return 刷新令牌
+     * @return TokenInfo对象
      */
-    public String generateRefreshToken(String subject, Map<String, Object> claims) {
+    public TokenInfo generateRefreshToken(String subject, Map<String, Object> claims) {
         if (claims == null) {
             claims = new java.util.HashMap<>();
         }
 
+        val expiration = System.currentTimeMillis() + refreshExpiration;
         // 添加标准声明
         claims.put("jti", UUID.randomUUID().toString());
         claims.put("iat", Instant.now().getEpochSecond());
         claims.put("type", "refresh_token");
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .subject(subject)
                 .issuer(issuer)
                 .claims(claims)
-                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .expiration(new Date(expiration))
                 .signWith(getSigningKey())
                 .compact();
+
+        return TokenInfo.builder()
+                .token(token)
+                .expiration(expiration)
+                .expiresIn(getRefreshTokenExpirationSeconds())
+                .type("refresh_token")
+                .build();
     }
 
     /**

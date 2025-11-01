@@ -35,14 +35,8 @@ public class VerificationEmailRequest {
     @NotNull(message = "验证目的不能为空")
     private Purpose purpose;
 
-//    @NotBlank(message = "图形验证码ID不能为空")
-//    private String captchaId;
-//
-//    @NotBlank(message = "图形验证码不能为空")
-//    private String captchaCode;
 
     public enum Purpose {
-//        REGISTER("register"),
         RESET_PASSWORD("reset_password"),
         CHANGE_EMAIL("change_email"),
         LOGIN("login");

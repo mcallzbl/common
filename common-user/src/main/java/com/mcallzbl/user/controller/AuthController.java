@@ -45,14 +45,14 @@ public class AuthController {
         if(user == null) {
             throw BusinessException.of("登录失败");
         }
-        val accessToken = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
-        val refreshToken = jwtUtil.generateRefreshToken(String.valueOf(user.getId()), null);
+        val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
+        val refreshTokenInfo = jwtUtil.generateRefreshToken(String.valueOf(user.getId()), null);
         return LoginResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(accessTokenInfo.getToken())
+                .refreshToken(refreshTokenInfo.getToken())
                 .nickname(user.getNickname())
-                .accessTokenExpiresIn(jwtUtil.getAccessTokenExpirationSeconds())
-                .refreshTokenExpiresIn(jwtUtil.getRefreshTokenExpirationSeconds())
+                .accessTokenExpiresIn(accessTokenInfo.getExpiration())
+                .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
                 .build();
     }
 
