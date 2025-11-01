@@ -1,4 +1,4 @@
-package com.mcallzbl.user.pojo.vo;
+package com.mcallzbl.user.pojo.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "登录响应数据")
-public class LoginVO {
+public class LoginResponse {
 
     @Schema(description = "昵称", example = "小明")
     private String nickname;

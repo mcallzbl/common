@@ -5,6 +5,10 @@ import com.mcallzbl.common.Result;
 import com.mcallzbl.common.ResultCode;
 import com.mcallzbl.common.annotation.NoResponseWrapper;
 import com.mcallzbl.common.annotation.ResponseWrapper;
+import com.mcallzbl.common.exception.I18nBusinessException;
+import com.mcallzbl.common.util.CommonI18nUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,8 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Demo控制器 - 展示公共模块的各种功能
@@ -28,7 +31,17 @@ import java.util.List;
 @RequestMapping("/demo")
 @RequiredArgsConstructor
 @ResponseWrapper // 整个Controller启用响应包装
+@Tag(name = "Demo示例", description = "展示公共模块的各种功能，包括响应包装、异常处理、参数校验、国际化等")
 public class DemoController {
+
+    private final CommonI18nUtils commonI18NUtils;
+    private final I18nBusinessException i18nBusinessException;
+
+    @ResponseWrapper
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
 
     // ==================== 基础响应包装示例 ====================
 
@@ -276,6 +289,103 @@ public class DemoController {
             case 10 -> throw BusinessException.businessError("业务错误");
             default -> throw BusinessException.of("自定义异常消息");
         }
+    }
+
+    // ==================== 国际化功能示例 ====================
+
+    /**
+     * 获取当前Locale信息
+     * GET /demo/locale-info
+     */
+    @GetMapping("/locale-info")
+    @Operation(summary = "获取当前Locale信息", description = "返回当前请求的本地化信息")
+    public Result<Map<String, Object>> getLocaleInfo() {
+        Map<String, Object> localeInfo = new HashMap<>();
+        Locale currentLocale = commonI18NUtils.getCurrentLocale();
+
+        localeInfo.put("currentLocale", currentLocale.toString());
+        localeInfo.put("language", currentLocale.getLanguage());
+        localeInfo.put("country", currentLocale.getCountry());
+        localeInfo.put("displayName", currentLocale.getDisplayName());
+        localeInfo.put("isChinese", commonI18NUtils.isChineseLocale());
+        localeInfo.put("isEnglish", commonI18NUtils.isEnglishLocale());
+        localeInfo.put("isJapanese", commonI18NUtils.isJapaneseLocale());
+
+        return Result.success(localeInfo);
+    }
+
+    /**
+     * 获取指定语言的欢迎消息
+     * GET /demo/i18n/welcome?language=zh_CN
+     */
+    @GetMapping("/i18n/welcome")
+    @Operation(summary = "获取欢迎消息", description = "根据指定的语言参数返回对应的欢迎消息")
+    public Result<String> getWelcomeMessage(
+            @RequestParam(defaultValue = "zh_CN") String language) {
+        String message = commonI18NUtils.getMessage("common.success", language);
+        return Result.success(message);
+    }
+
+    /**
+     * 批量获取多个国际化消息
+     * GET /demo/i18n/messages?language=en
+     */
+    @GetMapping("/i18n/messages")
+    @Operation(summary = "批量获取消息", description = "一次性获取多个国际化消息")
+    public Result<Map<String, String>> getMessages(
+            @RequestParam(defaultValue = "zh_CN") String language) {
+
+        Map<String, String> messages = new HashMap<>();
+
+        // 获取多个常用的国际化消息
+        messages.put("success", commonI18NUtils.getMessage("common.success", language));
+        messages.put("failed", commonI18NUtils.getMessage("common.failed", language));
+        messages.put("userNotFound", commonI18NUtils.getMessage("user.not.found", language));
+        messages.put("captchaInvalid", commonI18NUtils.getMessage("captcha.invalid", language));
+        messages.put("rateLimitExceeded", commonI18NUtils.getMessage("rate.limit.exceeded", language));
+
+        return Result.success(messages);
+    }
+
+    /**
+     * 抛出国际化业务异常示例
+     * GET /demo/i18n/exception?type=userNotFound&language=en
+     */
+    @GetMapping("/i18n/exception")
+    @Operation(summary = "国际化异常示例", description = "抛出支持多语言的业务异常")
+    public Result<String> throwI18nException(
+            @RequestParam(defaultValue = "userNotFound") String type,
+            @RequestParam(defaultValue = "zh_CN") String language) {
+
+        // 根据不同的条件抛出不同的国际化异常
+        switch (type) {
+            case "userNotFound" -> throw i18nBusinessException.create(ResultCode.USER_NOT_FOUND, language);
+            case "verificationCode" -> throw i18nBusinessException.verificationCodeRequired();
+            case "emailVerification" -> throw i18nBusinessException.emailVerificationCodeError();
+            case "rateLimit" -> throw i18nBusinessException.rateLimitExceeded();
+            case "systemBusy" -> throw i18nBusinessException.systemBusy();
+            default -> throw i18nBusinessException.create(ResultCode.VALIDATION_FAILED, language);
+        }
+    }
+
+    /**
+     * 验证码错误异常示例
+     * GET /demo/i18n/verification-code-error
+     */
+    @GetMapping("/i18n/verification-code-error")
+    @Operation(summary = "验证码错误示例", description = "演示验证码相关的国际化异常")
+    public Result<String> verificationCodeError() {
+        throw i18nBusinessException.verificationCodeRequired();
+    }
+
+    /**
+     * 邮箱验证码错误异常示例
+     * GET /demo/i18n/email-verification-error
+     */
+    @GetMapping("/i18n/email-verification-error")
+    @Operation(summary = "邮箱验证码错误示例", description = "演示邮箱验证码相关的国际化异常")
+    public Result<String> emailVerificationCodeError() {
+        throw i18nBusinessException.emailVerificationCodeError();
     }
 
     // ==================== 内部数据类 ====================

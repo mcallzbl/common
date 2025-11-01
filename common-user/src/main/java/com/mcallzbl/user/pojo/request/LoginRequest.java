@@ -1,4 +1,4 @@
-package com.mcallzbl.user.pojo.dto;
+package com.mcallzbl.user.pojo.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "统一登录请求参数")
-public class LoginDTO {
+public class LoginRequest {
 
     @Email(message = "邮箱格式不正确")
     @NotNull(message = "邮箱不能为空")

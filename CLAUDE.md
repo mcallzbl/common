@@ -81,3 +81,32 @@ The project uses managed dependencies for:
 - Java version: 17
 - Maven packaging: jar (for common-spring module)
 - Parent POM manages dependency versions
+
+数据库映射说明:
+使用Mybatis plus
+DateTime类型,大多数情况应该使用Instant作为映射
+表示状态的类型，应该使用枚举类完成，并加上@EnumValue
+时间字段不要加上自动填入
+
+枚举设计：
+涉及数据库映射，使用@EnumValue枚举，涉及json转换，就要@JsonValue和@JsonCreator
+使用字符串转换成枚举类型时，最好不区分大小写
+使用静态map完成转换
+
+dto:
+对于请求或返回类型，应该直接加上springdoc注解，并且请求的加上适当的参数验证
+
+controller:
+自动加上springdoc的注解
+示例：
+
+```java
+@Slf4j
+@RestController
+@RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
+@Tag(name = "认证管理", description = "用户认证相关接口，包括登录、注册、登出、刷新Token等")
+```
+
+通用：
+自动在每个方法前加上注释

@@ -1,6 +1,8 @@
 package com.mcallzbl.user.pojo.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.mcallzbl.common.enums.DeleteStatus;
 import com.mcallzbl.user.enums.Gender;
 import com.mcallzbl.user.enums.UserStatus;
@@ -28,7 +30,7 @@ public class User {
     /**
      * 用户ID，主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id")
     private Long id;
 
     /**
@@ -107,7 +109,7 @@ public class User {
      * 邮箱是否已验证：0-未验证，1-已验证
      */
     @TableField(value = "email_verified")
-    private Integer emailVerified = 0;
+    private Boolean emailVerified = false;
 
     /**
      * 手机是否已验证：0-未验证，1-已验证
@@ -148,13 +150,13 @@ public class User {
     /**
      * 创建时间
      */
-    @TableField(value = "created_time", fill = FieldFill.INSERT)
+    @TableField(value = "created_time")
     private Instant createdTime;
 
     /**
      * 更新时间
      */
-    @TableField(value = "updated_time", fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "updated_time")
     private Instant updatedTime;
 
     /**
@@ -181,4 +183,5 @@ public class User {
         this.lastLoginIp = loginIp;
         this.loginCount = (this.loginCount == null ? 0 : this.loginCount) + 1;
     }
+
 }

@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>验证码邮件</title>
+    <title th:text="${emailTitle}">验证码邮件</title>
     <style>
         * {
             margin: 0;
@@ -227,25 +227,26 @@
         </div>
 
         <div class="code-container">
-            <div class="code-label" th:text="'你的专属【' + ${action} + '】验证码'">你的专属验证码</div>
+            <div class="code-label" th:text="${codeLabel}">你的验证码</div>
             <div class="verification-code" th:text="${code}">123456</div>
             <div class="code-validity" th:text="'⏰ ' + ${validity}">⏰ 5分钟内有效</div>
         </div>
 
         <div class="security-notice">
             <span class="security-icon">🛡️</span>
-            <strong>安全提醒：</strong>这个验证码只属于你，请不要分享给任何人。我们的团队永远不会主动询问你的验证码。
+            <strong th:text="${securityTitle}">安全提醒：</strong>
+            <span th:text="${securityContent}">这个验证码只属于你，请不要分享给任何人。我们的团队永远不会主动询问你的验证码。</span>
         </div>
 
         <div class="signature">
-            <div class="thanks">感谢你的信任与支持</div>
+            <div class="thanks" th:text="${signatureThanks}">感谢你的信任与支持</div>
             <div class="team" th:text="${teamName}">用户服务团队</div>
         </div>
     </div>
 
     <div class="footer">
         <div class="footer-text">
-            <span th:text="${companyName}">用户服务</span> · 让生活更美好<br>
+            <span th:text="${companyName}">用户服务</span> · <span th:text="${footerSlogan}">让生活更美好</span><br>
         </div>
     </div>
 </div>

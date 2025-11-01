@@ -9,7 +9,6 @@ import com.mcallzbl.common.dto.CommonResultTransferDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -84,8 +83,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
             // 如果已经是Result类型，直接转换为传输DTO
             if (body instanceof Result<?> result) {
                 // 设置HTTP状态码
-                HttpStatus httpStatus = HttpStatus.valueOf(result.getHttpStatus());
-                response.setStatusCode(httpStatus);
+                response.setStatusCode(result.getHttpStatus());
 
                 log.debug("包装Result对象: code={}, message={}, data={}",
                         result.getCode(), result.getMessage(), result.getData());

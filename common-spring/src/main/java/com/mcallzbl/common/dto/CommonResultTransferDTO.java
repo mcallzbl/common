@@ -1,10 +1,15 @@
 package com.mcallzbl.common.dto;
 
 import com.mcallzbl.common.Result;
+import com.mcallzbl.common.ResultCode;
+import com.mcallzbl.common.util.CommonI18nUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.time.Instant;
 
@@ -46,7 +51,7 @@ public class CommonResultTransferDTO<T> {
                 .code(result.getCode())
                 .message(result.getMessage())
                 .data(result.getData())
-                .timestamp(Instant.now())
+                .timestamp(result.getTimestamp())
                 .build();
     }
 
@@ -56,7 +61,7 @@ public class CommonResultTransferDTO<T> {
     public static <T> CommonResultTransferDTO<T> success(T data) {
         return CommonResultTransferDTO.<T>builder()
                 .code(200)
-                .message("操作成功")
+                .message(ResultCode.SUCCESS.getMessage())
                 .data(data)
                 .timestamp(Instant.now())
                 .build();

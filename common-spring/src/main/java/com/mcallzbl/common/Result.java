@@ -1,30 +1,33 @@
 package com.mcallzbl.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+
+import java.time.Instant;
 
 /**
  * 统一响应结果包装类
  */
 @Data
 public class Result<T> {
-    private int httpStatus;
+    @JsonIgnore
+    private HttpStatus httpStatus;
     private int code;
     private String message;
     private T data;
-//    private long timestamp;
+    private Instant timestamp;
 
     public Result() {
-//        this.timestamp = System.currentTimeMillis();
-        this.httpStatus = HttpStatus.OK.value();
+        this(HttpStatus.OK, ResultCode.SUCCESS.getCode(), "", null);
     }
 
-    private Result(int httpStatus, int code, String message, T data) {
+    private Result(HttpStatus httpStatus, int code, String message, T data) {
         this.httpStatus = httpStatus;
         this.code = code;
         this.message = message;
         this.data = data;
-//        this.timestamp = System.currentTimeMillis();
+        timestamp = Instant.now();
     }
 
     // ==================== 成功返回方法 ====================
@@ -34,7 +37,7 @@ public class Result<T> {
      */
     public static <T> Result<T> success(T data) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.SUCCESS.getCode(),
                 ResultCode.SUCCESS.getMessage(),
                 data
@@ -46,7 +49,7 @@ public class Result<T> {
      */
     public static <T> Result<T> success(T data, String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.SUCCESS.getCode(),
                 message,
                 data
@@ -58,7 +61,7 @@ public class Result<T> {
      */
     public static <T> Result<T> success(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.SUCCESS.getCode(),
                 message,
                 null
@@ -70,7 +73,7 @@ public class Result<T> {
      */
     public static <T> Result<T> success() {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.SUCCESS.getCode(),
                 ResultCode.SUCCESS.getMessage(),
                 null
@@ -82,7 +85,7 @@ public class Result<T> {
      */
     public static <T> Result<T> success(HttpStatus httpStatus, T data) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 ResultCode.SUCCESS.getCode(),
                 ResultCode.SUCCESS.getMessage(),
                 data
@@ -94,7 +97,7 @@ public class Result<T> {
      */
     public static <T> Result<T> success(HttpStatus httpStatus, T data, String message) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 ResultCode.SUCCESS.getCode(),
                 message,
                 data
@@ -108,7 +111,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed(HttpStatus httpStatus, ResultCode errorCode) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 errorCode.getCode(),
                 errorCode.getMessage(),
                 null
@@ -120,7 +123,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed(HttpStatus httpStatus, String message) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 ResultCode.FAILED.getCode(),
                 message,
                 null
@@ -132,7 +135,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed(ResultCode errorCode) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 errorCode.getCode(),
                 errorCode.getMessage(),
                 null
@@ -144,7 +147,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed(ResultCode errorCode, T data) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 errorCode.getCode(),
                 errorCode.getMessage(),
                 data
@@ -156,7 +159,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.FAILED.getCode(),
                 message,
                 null
@@ -168,7 +171,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed(String message, T data) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.FAILED.getCode(),
                 message,
                 data
@@ -180,7 +183,7 @@ public class Result<T> {
      */
     public static <T> Result<T> failed() {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.FAILED.getCode(),
                 ResultCode.FAILED.getMessage(),
                 null
@@ -192,7 +195,7 @@ public class Result<T> {
      */
     public static Result<Object> failed(BusinessException e) {
         return new Result<>(
-                e.getHttpStatus().value(),
+                e.getHttpStatus(),
                 e.getCode(),
                 e.getUserFriendlyMessage(),
                 e.getData()
@@ -206,7 +209,7 @@ public class Result<T> {
      */
     public static <T> Result<T> validationFailed(String message) {
         return new Result<>(
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST,
                 ResultCode.VALIDATION_FAILED.getCode(),
                 message,
                 null
@@ -218,7 +221,7 @@ public class Result<T> {
      */
     public static <T> Result<T> validationFailed(String message, T data) {
         return new Result<>(
-                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST,
                 ResultCode.VALIDATION_FAILED.getCode(),
                 message,
                 data
@@ -230,7 +233,7 @@ public class Result<T> {
      */
     public static <T> Result<T> unauthorized(String message) {
         return new Result<>(
-                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED,
                 ResultCode.UNAUTHORIZED.getCode(),
                 message,
                 null
@@ -242,7 +245,7 @@ public class Result<T> {
      */
     public static <T> Result<T> forbidden(String message) {
         return new Result<>(
-                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN,
                 ResultCode.FORBIDDEN.getCode(),
                 message,
                 null
@@ -254,7 +257,7 @@ public class Result<T> {
      */
     public static <T> Result<T> notFound(String message) {
         return new Result<>(
-                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND,
                 ResultCode.NOT_FOUND.getCode(),
                 message,
                 null
@@ -266,7 +269,7 @@ public class Result<T> {
      */
     public static <T> Result<T> userNotFound(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.USER_NOT_FOUND.getCode(),
                 message,
                 null
@@ -278,7 +281,7 @@ public class Result<T> {
      */
     public static <T> Result<T> userAlreadyExists(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.USER_ALREADY_EXISTS.getCode(),
                 message,
                 null
@@ -290,7 +293,7 @@ public class Result<T> {
      */
     public static <T> Result<T> passwordIncorrect(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.PASSWORD_INCORRECT.getCode(),
                 message,
                 null
@@ -302,7 +305,7 @@ public class Result<T> {
      */
     public static <T> Result<T> captchaInvalid(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.CAPTCHA_INVALID.getCode(),
                 message,
                 null
@@ -314,7 +317,7 @@ public class Result<T> {
      */
     public static <T> Result<T> captchaExpired(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.CAPTCHA_EXPIRED.getCode(),
                 message,
                 null
@@ -326,7 +329,7 @@ public class Result<T> {
      */
     public static <T> Result<T> tokenInvalid(String message) {
         return new Result<>(
-                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED,
                 ResultCode.TOKEN_INVALID.getCode(),
                 message,
                 null
@@ -338,7 +341,7 @@ public class Result<T> {
      */
     public static <T> Result<T> tokenExpired(String message) {
         return new Result<>(
-                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED,
                 ResultCode.TOKEN_EXPIRED.getCode(),
                 message,
                 null
@@ -350,7 +353,7 @@ public class Result<T> {
      */
     public static <T> Result<T> businessError(String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.BUSINESS_ERROR.getCode(),
                 message,
                 null
@@ -362,7 +365,7 @@ public class Result<T> {
      */
     public static <T> Result<T> businessError(String message, T data) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 ResultCode.BUSINESS_ERROR.getCode(),
                 message,
                 data
@@ -374,7 +377,7 @@ public class Result<T> {
      */
     public static <T> Result<T> systemBusy(String message) {
         return new Result<>(
-                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                HttpStatus.SERVICE_UNAVAILABLE,
                 ResultCode.SYSTEM_BUSY.getCode(),
                 message,
                 null
@@ -386,7 +389,7 @@ public class Result<T> {
      */
     public static <T> Result<T> rateLimitExceeded(String message) {
         return new Result<>(
-                HttpStatus.TOO_MANY_REQUESTS.value(),
+                HttpStatus.TOO_MANY_REQUESTS,
                 ResultCode.RATE_LIMIT_EXCEEDED.getCode(),
                 message,
                 null
@@ -398,7 +401,7 @@ public class Result<T> {
     /**
      * 自定义返回结果（完整参数）
      */
-    public static <T> Result<T> custom(int httpStatus, int code, String message, T data) {
+    public static <T> Result<T> custom(HttpStatus httpStatus, int code, String message, T data) {
         return new Result<>(httpStatus, code, message, data);
     }
 
@@ -407,7 +410,7 @@ public class Result<T> {
      */
     public static <T> Result<T> custom(HttpStatus httpStatus, ResultCode resultCode) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 resultCode.getCode(),
                 resultCode.getMessage(),
                 null
@@ -419,7 +422,7 @@ public class Result<T> {
      */
     public static <T> Result<T> custom(HttpStatus httpStatus, ResultCode resultCode, T data) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 resultCode.getCode(),
                 resultCode.getMessage(),
                 data
@@ -431,7 +434,7 @@ public class Result<T> {
      */
     public static <T> Result<T> custom(ResultCode resultCode, String message) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 resultCode.getCode(),
                 message,
                 null
@@ -443,7 +446,7 @@ public class Result<T> {
      */
     public static <T> Result<T> custom(ResultCode resultCode, String message, T data) {
         return new Result<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 resultCode.getCode(),
                 message,
                 data
@@ -520,7 +523,7 @@ public class Result<T> {
      */
     public static <T> Result<T> of(HttpStatus httpStatus, ResultCode resultCode, T data) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 resultCode.getCode(),
                 resultCode.getMessage(),
                 data
@@ -532,7 +535,7 @@ public class Result<T> {
      */
     public static <T> Result<T> of(HttpStatus httpStatus, ResultCode resultCode, String message) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 resultCode.getCode(),
                 message,
                 null
@@ -544,7 +547,7 @@ public class Result<T> {
      */
     public static <T> Result<T> of(HttpStatus httpStatus, ResultCode resultCode, String message, T data) {
         return new Result<>(
-                httpStatus.value(),
+                httpStatus,
                 resultCode.getCode(),
                 message,
                 data
@@ -554,7 +557,7 @@ public class Result<T> {
     /**
      * 创建结果（HTTP状态码 + 错误码 + 消息 + 数据）- 完整参数
      */
-    public static <T> Result<T> of(int httpStatus, int code, String message, T data) {
+    public static <T> Result<T> of(HttpStatus httpStatus, int code, String message, T data) {
         return custom(httpStatus, code, message, data);
     }
 
