@@ -16,10 +16,10 @@ import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+
 /**
  * @author mcallzbl
  * @version 1.0
@@ -47,7 +47,7 @@ public class JwtUtil {
      * 调用方自行构建claims，返回token和过期时间
      *
      * @param subject 主题（通常是用户ID或标识符）
-     * @param claims 自定义声明
+     * @param claims  自定义声明
      * @return TokenInfo对象
      */
     public TokenInfo generateAccessToken(String subject, Map<String, Object> claims) {
@@ -81,7 +81,7 @@ public class JwtUtil {
      * 调用方自行构建claims，返回token和过期时间
      *
      * @param subject 主题（通常是用户ID或标识符）
-     * @param claims 自定义声明
+     * @param claims  自定义声明
      * @return TokenInfo对象
      */
     public TokenInfo generateRefreshToken(String subject, Map<String, Object> claims) {
@@ -115,10 +115,10 @@ public class JwtUtil {
      * 生成自定义令牌
      * 完全自定义的JWT生成方法
      *
-     * @param subject 主题
-     * @param claims 自定义声明
+     * @param subject    主题
+     * @param claims     自定义声明
      * @param expiration 过期时间（毫秒）
-     * @param issuer 发行者（可选）
+     * @param issuer     发行者（可选）
      * @return JWT令牌
      */
     public String generateToken(String subject, Map<String, Object> claims, long expiration, String issuer) {
@@ -251,7 +251,7 @@ public class JwtUtil {
      * 提取指定键的值
      *
      * @param token JWT令牌
-     * @param key 键名
+     * @param key   键名
      * @return 值
      */
     public Object extractClaim(String token, String key) {

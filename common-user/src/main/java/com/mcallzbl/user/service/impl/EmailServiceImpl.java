@@ -90,7 +90,7 @@ public class EmailServiceImpl implements EmailService {
         context.setVariable("validity", emailI18nUtils.getMessage("email.validity"));
         context.setVariable("teamName", emailI18nUtils.getMessage("email.team.name"));
 
-      // 添加模板国际化变量
+        // 添加模板国际化变量
         context.setVariable("emailTitle", emailI18nUtils.getMessage("email.title"));
         context.setVariable("codeLabel", emailI18nUtils.getMessage("email.code.label"));
         context.setVariable("securityTitle", emailI18nUtils.getMessage("email.security.title"));

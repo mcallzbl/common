@@ -1,7 +1,7 @@
 package com.mcallzbl.user.Interceptor;
 
-import com.mcallzbl.user.config.UserContext;
 import com.mcallzbl.user.constants.AuthConstants;
+import com.mcallzbl.user.context.UserContext;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.service.UserService;
 import com.mcallzbl.user.util.JwtUtil;
@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;

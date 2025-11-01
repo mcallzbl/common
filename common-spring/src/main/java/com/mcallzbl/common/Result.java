@@ -1,6 +1,7 @@
 package com.mcallzbl.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
@@ -10,12 +11,22 @@ import java.time.Instant;
  * 统一响应结果包装类
  */
 @Data
+@Schema(description = "统一响应结果")
 public class Result<T> {
     @JsonIgnore
+    @Schema(hidden = true)
     private HttpStatus httpStatus;
+
+    @Schema(description = "业务状态码", example = "200")
     private int code;
+
+    @Schema(description = "响应消息", example = "操作成功")
     private String message;
+
+    @Schema(description = "响应数据")
     private T data;
+
+    @Schema(description = "时间戳", example = "2025-11-01T11:00:42.798042945Z")
     private Instant timestamp;
 
     public Result() {

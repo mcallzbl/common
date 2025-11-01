@@ -1,10 +1,10 @@
 package com.mcallzbl.user.controller;
 
 import com.mcallzbl.common.BusinessException;
+import com.mcallzbl.common.Result;
 import com.mcallzbl.common.annotation.ResponseWrapper;
 import com.mcallzbl.user.config.SessionConfig;
 import com.mcallzbl.user.constants.AuthConstants;
-import com.mcallzbl.user.constants.JwtClaimsConstant;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.LoginRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
@@ -28,9 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.mcallzbl.user.constants.AuthConstants.REFRESH_TOKEN;
 
@@ -60,12 +57,12 @@ public class AuthController {
     )
     @ResponseWrapper
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest,
-                               HttpServletResponse response) {
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest,
+                                       HttpServletResponse response) {
         log.debug("[com.mcallzbl.user.controller.AuthController.login()]" +
                 " params: loginRequest={}", loginRequest);
         val user = authService.login(loginRequest);
-        if(user == null) {
+        if (user == null) {
             throw BusinessException.of("登录失败");
         }
         val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
@@ -79,13 +76,14 @@ public class AuthController {
         refreshCookie.setSecure(sessionConfig.isSecure());
         response.addCookie(refreshCookie);
 
-        return LoginResponse.builder()
+        return Result.success(LoginResponse.builder()
                 .accessToken(accessTokenInfo.getToken())
                 .refreshToken(refreshTokenInfo.getToken())
                 .nickname(user.getNickname())
                 .accessTokenExpiresIn(accessTokenInfo.getExpiration())
                 .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
-                .build();
+                .build()
+        );
     }
 
     /**
@@ -100,10 +98,10 @@ public class AuthController {
     )
     @ResponseWrapper
     @PostMapping("/verification/emails")
-    public VerificationEmailResponse sendEmailVerificationCode(@Valid @RequestBody VerificationEmailRequest verificationEmailDTO) {
+    public Result<VerificationEmailResponse> sendEmailVerificationCode(@Valid @RequestBody VerificationEmailRequest verificationEmailDTO) {
         log.info("[AuthController.sendEmailVerificationCode] " +
                 "params: email={}", verificationEmailDTO.getEmail());
-        return emailVerificationService.sendVerificationCode(verificationEmailDTO);
+        return Result.success(emailVerificationService.sendVerificationCode(verificationEmailDTO));
     }
 
     /**

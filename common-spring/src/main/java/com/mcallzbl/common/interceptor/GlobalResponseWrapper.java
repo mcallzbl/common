@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mcallzbl.common.Result;
 import com.mcallzbl.common.annotation.NoResponseWrapper;
 import com.mcallzbl.common.annotation.ResponseWrapper;
-import com.mcallzbl.common.dto.CommonResultTransferDTO;
+import com.mcallzbl.common.dto.CommonResultTransferVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -88,13 +88,13 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
                 log.debug("包装Result对象: code={}, message={}, data={}",
                         result.getCode(), result.getMessage(), result.getData());
 
-                return CommonResultTransferDTO.from(result);
+                return CommonResultTransferVO.from(result);
             }
 
             // 处理String返回类型的特殊情况
             if (body instanceof String) {
                 Result<String> result = Result.success((String) body);
-                CommonResultTransferDTO<String> transferDTO = CommonResultTransferDTO.from(result);
+                CommonResultTransferVO<String> transferDTO = CommonResultTransferVO.from(result);
 
                 try {
                     String jsonString = objectMapper.writeValueAsString(transferDTO);
@@ -108,7 +108,7 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
             // 包装其他类型的返回值
             Result<Object> result = Result.success(body);
-            CommonResultTransferDTO<Object> transferDTO = CommonResultTransferDTO.from(result);
+            CommonResultTransferVO<Object> transferDTO = CommonResultTransferVO.from(result);
 
             log.debug("包装对象响应: code={}, message={}, data={}",
                     transferDTO.getCode(), transferDTO.getMessage(), transferDTO.getData());

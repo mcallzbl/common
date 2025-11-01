@@ -11,7 +11,6 @@ import org.thymeleaf.spring6.messageresolver.SpringMessageResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 /**
  * 邮件模板引擎配置类

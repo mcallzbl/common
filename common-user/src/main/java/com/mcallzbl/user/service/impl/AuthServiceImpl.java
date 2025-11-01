@@ -6,7 +6,6 @@ import com.mcallzbl.user.mapper.UserMapper;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.LoginRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
-import com.mcallzbl.user.pojo.response.LoginResponse;
 import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
 import com.mcallzbl.user.service.AuthService;
 import com.mcallzbl.user.service.EmailVerificationService;

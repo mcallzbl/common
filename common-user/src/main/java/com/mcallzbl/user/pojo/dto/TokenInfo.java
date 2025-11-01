@@ -47,8 +47,8 @@ public class TokenInfo {
      */
     public LocalDateTime getExpirationTime() {
         return LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(expiration),
-            java.time.ZoneId.systemDefault()
+                Instant.ofEpochMilli(expiration),
+                java.time.ZoneId.systemDefault()
         );
     }
 
