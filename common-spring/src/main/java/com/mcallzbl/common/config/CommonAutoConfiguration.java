@@ -98,11 +98,11 @@ public class CommonAutoConfiguration {
     }
 
     /**
-     *  注册InstantAutoFillHandler
+     * 注册InstantAutoFillHandler
      */
     @Bean
     @ConditionalOnMissingBean
-    public InstantAutoFillHandler  instantAutoFillHandler() {
+    public InstantAutoFillHandler instantAutoFillHandler() {
         log.info("注册InstantAutoFillHandler");
         return new InstantAutoFillHandler();
     }

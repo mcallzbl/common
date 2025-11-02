@@ -2,6 +2,7 @@ package com.mcallzbl.user.service.impl;
 
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.ResultCode;
+import com.mcallzbl.user.context.IpContext;
 import com.mcallzbl.user.mapper.UserMapper;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.LoginRequest;
@@ -10,8 +11,6 @@ import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
 import com.mcallzbl.user.service.AuthService;
 import com.mcallzbl.user.service.EmailVerificationService;
 import com.mcallzbl.user.service.UserService;
-import com.mcallzbl.user.context.IpContext;
-import com.mcallzbl.user.utils.IpUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +45,9 @@ public class AuthServiceImpl implements AuthService {
         // 根据密码或验证码是否存在来判断登录方式
         if (StringUtils.hasText(loginRequest.getVerificationCode())) {
             user = handleEmailCodeLogin(loginRequest);
-        } else if(StringUtils.hasText(loginRequest.getPassword())) {
+        } else if (StringUtils.hasText(loginRequest.getPassword())) {
             user = handlePasswordLogin(loginRequest);
-        }else {
+        } else {
             throw new BusinessException(ResultCode.VALIDATION_FAILED, "非法的登录请求");
         }
 
@@ -82,10 +81,9 @@ public class AuthServiceImpl implements AuthService {
                 loginDTO.getVerificationCode(),
                 VerificationEmailRequest.Purpose.LOGIN
         );
-// TODO 屏蔽邮件验证码验证
-//        if (!isCodeValid) {
-//            throw new BusinessException(ResultCode.EMAIL_VERIFICATION_CODE_ERROR, "邮箱验证码错误或已过期");
-//        }
+        if (!isCodeValid) {
+            throw new BusinessException(ResultCode.EMAIL_VERIFICATION_CODE_ERROR, "邮箱验证码错误或已过期");
+        }
 
         User user = userMapper.selectByEmail(loginDTO.getEmail());
 

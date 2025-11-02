@@ -15,16 +15,6 @@ public class IpContext {
     private static final ThreadLocal<String> IP_HOLDER = new ThreadLocal<>();
 
     /**
-     * 设置当前请求的IP地址
-     *
-     * @param ip IP地址字符串
-     */
-    public static void setIp(String ip) {
-        log.debug("设置当前请求IP地址: {}", ip);
-        IP_HOLDER.set(ip);
-    }
-
-    /**
      * 获取当前请求的IP地址
      *
      * @return IP地址字符串，如果未设置则返回null
@@ -33,6 +23,16 @@ public class IpContext {
         String ip = IP_HOLDER.get();
         log.debug("获取当前请求IP地址: {}", ip);
         return ip;
+    }
+
+    /**
+     * 设置当前请求的IP地址
+     *
+     * @param ip IP地址字符串
+     */
+    public static void setIp(String ip) {
+        log.debug("设置当前请求IP地址: {}", ip);
+        IP_HOLDER.set(ip);
     }
 
     /**

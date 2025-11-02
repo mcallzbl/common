@@ -21,7 +21,7 @@ public class IpUtils {
     private static final String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
     private static final String LOCALHOST_IPV6_SHORT = "::1";
     private static final Pattern IP_PATTERN = Pattern.compile(
-        "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+            "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
     );
 
     /**
@@ -106,10 +106,10 @@ public class IpUtils {
      */
     private static boolean isValidIp(String ip) {
         return StringUtils.hasText(ip) &&
-               !UNKNOWN.equalsIgnoreCase(ip) &&
-               !ip.startsWith("192.168.") && // 不使用内网IP作为主要IP
-               !ip.startsWith("10.") &&
-               !ip.startsWith("172.");
+                !UNKNOWN.equalsIgnoreCase(ip) &&
+                !ip.startsWith("192.168.") && // 不使用内网IP作为主要IP
+                !ip.startsWith("10.") &&
+                !ip.startsWith("172.");
     }
 
     /**
@@ -134,11 +134,11 @@ public class IpUtils {
         }
 
         return ip.startsWith("192.168.") ||
-               ip.startsWith("10.") ||
-               ip.startsWith("172.") ||
-               LOCALHOST_IPV4.equals(ip) ||
-               LOCALHOST_IPV6.equals(ip) ||
-               LOCALHOST_IPV6_SHORT.equals(ip);
+                ip.startsWith("10.") ||
+                ip.startsWith("172.") ||
+                LOCALHOST_IPV4.equals(ip) ||
+                LOCALHOST_IPV6.equals(ip) ||
+                LOCALHOST_IPV6_SHORT.equals(ip);
     }
 
     /**

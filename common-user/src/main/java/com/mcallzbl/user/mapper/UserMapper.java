@@ -2,7 +2,6 @@ package com.mcallzbl.user.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mcallzbl.user.pojo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -23,8 +23,8 @@ public class IpInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request,
-                           @NonNull HttpServletResponse response,
-                           @NonNull Object handler) throws Exception {
+                             @NonNull HttpServletResponse response,
+                             @NonNull Object handler) throws Exception {
         try {
             // 获取客户端真实IP地址
             String clientIp = IpUtils.getClientIpAddress(request);
@@ -50,9 +50,9 @@ public class IpInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request,
-                              @NonNull HttpServletResponse response,
-                              @NonNull Object handler,
-                              Exception ex) throws Exception {
+                                @NonNull HttpServletResponse response,
+                                @NonNull Object handler,
+                                Exception ex) throws Exception {
         try {
             // 请求完成后清理ThreadLocal，防止内存泄漏
             String ip = IpContext.getIp();
