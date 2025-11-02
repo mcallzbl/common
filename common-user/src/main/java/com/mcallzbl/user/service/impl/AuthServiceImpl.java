@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailVerificationService emailVerificationService;
     private final UserMapper userMapper;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User login(LoginRequest loginRequest) {
@@ -44,8 +46,10 @@ public class AuthServiceImpl implements AuthService {
         // 根据密码或验证码是否存在来判断登录方式
         if (StringUtils.hasText(loginRequest.getVerificationCode())) {
             user = handleEmailCodeLogin(loginRequest);
-        } else {
-            throw new BusinessException(ResultCode.VALIDATION_FAILED, "验证码必须提供");
+        } else if(StringUtils.hasText(loginRequest.getPassword())) {
+            user = handlePasswordLogin(loginRequest);
+        }else {
+            throw new BusinessException(ResultCode.VALIDATION_FAILED, "非法的登录请求");
         }
 
         // 更新用户登录信息
@@ -60,6 +64,15 @@ public class AuthServiceImpl implements AuthService {
             log.warn("更新用户登录信息失败 - userId: {}", user.getId());
         }
 
+        return user;
+    }
+
+    private User handlePasswordLogin(LoginRequest loginRequest) {
+        User user = userMapper.selectByEmail(loginRequest.getEmail());
+        if (user == null || !StringUtils.hasText(user.getPasswordHash())
+                || !passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
+            throw BusinessException.of("邮箱或密码不正确");
+        }
         return user;
     }
 
