@@ -31,4 +31,12 @@ public interface UserService {
      * @return 创建的用户信息
      */
     User createUserByEmail(String email);
+
+    /**
+     * 通过id更新用户信息
+     *
+     * @param user 要更新的用户实体
+     * @return 更新是否成功
+     */
+    boolean updateUser(User user);
 }

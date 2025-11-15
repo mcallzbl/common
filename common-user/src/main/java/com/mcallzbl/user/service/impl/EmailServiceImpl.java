@@ -3,7 +3,7 @@ package com.mcallzbl.user.service.impl;
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
 import com.mcallzbl.user.service.EmailService;
-import com.mcallzbl.user.util.EmailI18nUtils;
+import com.mcallzbl.user.utils.EmailI18nUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

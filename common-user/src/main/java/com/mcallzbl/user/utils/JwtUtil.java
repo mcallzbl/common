@@ -1,4 +1,4 @@
-package com.mcallzbl.user.util;
+package com.mcallzbl.user.utils;
 
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.user.pojo.dto.TokenInfo;

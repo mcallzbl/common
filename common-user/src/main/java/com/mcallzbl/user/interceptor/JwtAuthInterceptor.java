@@ -1,10 +1,10 @@
-package com.mcallzbl.user.Interceptor;
+package com.mcallzbl.user.interceptor;
 
 import com.mcallzbl.user.constants.AuthConstants;
 import com.mcallzbl.user.context.UserContext;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.service.UserService;
-import com.mcallzbl.user.util.JwtUtil;
+import com.mcallzbl.user.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

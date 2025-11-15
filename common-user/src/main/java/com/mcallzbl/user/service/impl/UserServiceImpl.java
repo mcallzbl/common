@@ -6,7 +6,7 @@ import com.mcallzbl.user.enums.UserStatus;
 import com.mcallzbl.user.mapper.UserMapper;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.service.UserService;
-import com.mcallzbl.user.util.UsernameGenerator;
+import com.mcallzbl.user.utils.UsernameGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,6 +65,18 @@ public class UserServiceImpl implements UserService {
                 .build();
         userMapper.insert(user);
         return user;
+    }
+
+    /**
+     * 通过id更新用户信息
+     *
+     * @param user 要更新的用户实体
+     * @return 更新是否成功
+     */
+    @Override
+    public boolean updateUser(User user) {
+        int updateCount = userMapper.updateById(user);
+        return updateCount > 0;
     }
 
     /**

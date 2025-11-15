@@ -1,4 +1,4 @@
-package com.mcallzbl.user.util;
+package com.mcallzbl.user.utils;
 
 import com.mcallzbl.common.util.AbstractI18nUtils;
 import lombok.extern.slf4j.Slf4j;

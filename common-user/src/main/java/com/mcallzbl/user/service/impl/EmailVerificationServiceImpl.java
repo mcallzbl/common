@@ -6,7 +6,7 @@ import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
 import com.mcallzbl.user.pojo.response.VerificationEmailResponse;
 import com.mcallzbl.user.service.EmailService;
 import com.mcallzbl.user.service.EmailVerificationService;
-import com.mcallzbl.user.util.EmailI18nUtils;
+import com.mcallzbl.user.utils.EmailI18nUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;

@@ -3,7 +3,6 @@ package com.mcallzbl.user.service.impl;
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.ResultCode;
 import com.mcallzbl.user.context.IpContext;
-import com.mcallzbl.user.mapper.UserMapper;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.LoginRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
@@ -31,18 +31,17 @@ import org.springframework.validation.annotation.Validated;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final EmailVerificationService emailVerificationService;
-    private final UserMapper userMapper;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public User login(LoginRequest loginRequest) {
-        // 获取当前请求的IP地址（从拦截器设置的ThreadLocal中获取）
         String clientIp = IpContext.getIpOrDefault("127.0.0.1");
         log.info("用户登录尝试 - 邮箱: {}, IP地址: {}", loginRequest.getEmail(), clientIp);
 
+        //TODO 登录频率限制
         User user;
-        // 根据密码或验证码是否存在来判断登录方式
         if (StringUtils.hasText(loginRequest.getVerificationCode())) {
             user = handleEmailCodeLogin(loginRequest);
         } else if (StringUtils.hasText(loginRequest.getPassword())) {
@@ -55,19 +54,21 @@ public class AuthServiceImpl implements AuthService {
         user.updateLoginInfo(clientIp);
 
         // 保存到数据库
-        int updateResult = userMapper.updateById(user);
-        if (updateResult > 0) {
+        boolean updateSuccess = userService.updateUser(user);
+        if (updateSuccess) {
             log.info("用户登录成功 - userId: {}, 邮箱: {}, 登录IP: {}, 登录次数: {}",
                     user.getId(), user.getEmail(), clientIp, user.getLoginCount());
         } else {
             log.warn("更新用户登录信息失败 - userId: {}", user.getId());
+            throw BusinessException.of("登录失败");
         }
 
+        // TODO 登录失败应审计
         return user;
     }
 
     private User handlePasswordLogin(LoginRequest loginRequest) {
-        User user = userMapper.selectByEmail(loginRequest.getEmail());
+        User user = userService.getUserByEmail(loginRequest.getEmail());
         if (user == null || !StringUtils.hasText(user.getPasswordHash())
                 || !passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
             throw BusinessException.of("邮箱或密码不正确");
@@ -85,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ResultCode.EMAIL_VERIFICATION_CODE_ERROR, "邮箱验证码错误或已过期");
         }
 
-        User user = userMapper.selectByEmail(loginDTO.getEmail());
+        User user = userService.getUserByEmail(loginDTO.getEmail());
 
         if (user == null) {
             log.info("用户不存在，将通过邮箱验证码自动注册：email={}", loginDTO.getEmail());

@@ -1,7 +1,7 @@
 package com.mcallzbl.user.config;
 
-import com.mcallzbl.user.Interceptor.JwtAuthInterceptor;
 import com.mcallzbl.user.interceptor.IpInterceptor;
+import com.mcallzbl.user.interceptor.JwtAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

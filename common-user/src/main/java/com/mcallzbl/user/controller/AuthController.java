@@ -14,7 +14,7 @@ import com.mcallzbl.user.pojo.response.VerificationEmailResponse;
 import com.mcallzbl.user.service.AuthService;
 import com.mcallzbl.user.service.EmailVerificationService;
 import com.mcallzbl.user.service.UserService;
-import com.mcallzbl.user.util.JwtUtil;
+import com.mcallzbl.user.utils.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
