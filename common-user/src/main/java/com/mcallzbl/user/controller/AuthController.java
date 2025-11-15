@@ -5,8 +5,10 @@ import com.mcallzbl.common.Result;
 import com.mcallzbl.common.annotation.ResponseWrapper;
 import com.mcallzbl.user.config.SessionConfig;
 import com.mcallzbl.user.constants.AuthConstants;
+import com.mcallzbl.user.pojo.dto.TokenInfo;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.LoginRequest;
+import com.mcallzbl.user.pojo.request.TokenRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
 import com.mcallzbl.user.pojo.response.LoginResponse;
 import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
@@ -44,6 +46,7 @@ public class AuthController {
     private final UserService userService;
     private final EmailVerificationService emailVerificationService;
 
+
     /**
      * 用户登录
      *
@@ -66,16 +69,7 @@ public class AuthController {
             throw BusinessException.of("登录失败");
         }
         val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
-        val refreshTokenInfo = jwtUtil.generateRefreshToken(String.valueOf(user.getId()), null);
-
-        Cookie refreshCookie = new Cookie(REFRESH_TOKEN, refreshTokenInfo.getToken());
-        refreshCookie.setMaxAge((int) jwtUtil.getRefreshTokenExpirationSeconds());
-        refreshCookie.setPath("/");
-        refreshCookie.setDomain(sessionConfig.getDomain());
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(sessionConfig.isSecure());
-        response.addCookie(refreshCookie);
-
+        val refreshTokenInfo = generateRefreshTokenAndSetCookie(user, response);
         return Result.success(LoginResponse.builder()
                 .accessToken(accessTokenInfo.getToken())
                 .refreshToken(refreshTokenInfo.getToken())
@@ -118,11 +112,21 @@ public class AuthController {
     @ResponseWrapper
     @PostMapping("/logout")
     public String logout(
+            @RequestBody(required = false) TokenRequest tokenRequest,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        String accessToken = getAccessTokenFromRequest(request);
-        String refreshToken = getRefreshTokenFromCookie(request);
+        // 从请求体获取Token（移动端）
+        String accessTokenFromBody = tokenRequest != null ? tokenRequest.getAccessToken() : null;
+        String refreshTokenFromBody = tokenRequest != null ? tokenRequest.getRefreshToken() : null;
+
+        // 从Header和Cookie获取Token（Web端）
+        String accessTokenFromHeader = getAccessTokenFromRequest(request);
+        String refreshTokenFromCookie = getRefreshTokenFromCookie(request);
+
+        // 优先使用请求体中的Token
+        String accessToken = accessTokenFromBody != null ? accessTokenFromBody : accessTokenFromHeader;
+        String refreshToken = refreshTokenFromBody != null ? refreshTokenFromBody : refreshTokenFromCookie;
 
         log.info("[AuthController.logout] " +
                         "params: hasAccessToken={}, hasRefreshToken={}",
@@ -153,10 +157,14 @@ public class AuthController {
     @ResponseWrapper
     @PostMapping("/refresh")
     public RefreshTokenResponse refreshToken(
+            @RequestBody(required = false) TokenRequest tokenRequest,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        String refreshToken = getRefreshTokenFromCookie(request);
+
+        String refreshTokenFromBody = tokenRequest != null ? tokenRequest.getRefreshToken() : null;
+        String refreshTokenFromCookie = getRefreshTokenFromCookie(request);
+        String refreshToken = refreshTokenFromBody != null ? refreshTokenFromBody : refreshTokenFromCookie;
         Long userId = Long.valueOf(jwtUtil.extractSubject(refreshToken));
         User user = userService.getUserById(userId);
 
@@ -165,6 +173,27 @@ public class AuthController {
                 getRefreshTokenFromCookie(request) != null);
 
         val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
+        val refreshTokenInfo = generateRefreshTokenAndSetCookie(user, response);
+
+        return RefreshTokenResponse.builder()
+                .accessToken(accessTokenInfo.getToken())
+                .refreshToken(refreshTokenInfo.getToken())
+                .accessTokenExpiresIn(accessTokenInfo.getExpiration())
+                .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
+                .build();
+    }
+
+    /**
+     * 为用户生成refreshToken并设置Cookie
+     *
+     * @param user     用户对象
+     * @param response HTTP响应对象（用于设置Cookie）
+     * @return refreshToken信息
+     */
+    private TokenInfo generateRefreshTokenAndSetCookie(User user, HttpServletResponse response) {
+        log.debug("[com.mcallzbl.user.controller.AuthController.generateRefreshTokenAndSetCookie]" +
+                " params: userId={}", user.getId());
+
         val refreshTokenInfo = jwtUtil.generateRefreshToken(String.valueOf(user.getId()), null);
 
         Cookie refreshCookie = new Cookie(REFRESH_TOKEN, refreshTokenInfo.getToken());
@@ -175,12 +204,7 @@ public class AuthController {
         refreshCookie.setSecure(sessionConfig.isSecure());
         response.addCookie(refreshCookie);
 
-        return RefreshTokenResponse.builder()
-                .accessToken(accessTokenInfo.getToken())
-                .refreshToken(refreshTokenInfo.getToken())
-                .accessTokenExpiresIn(accessTokenInfo.getExpiration())
-                .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
-                .build();
+        return refreshTokenInfo;
     }
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
