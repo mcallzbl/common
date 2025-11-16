@@ -44,16 +44,16 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.mcallzbl</groupId>
-            <artifactId>common-spring</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.mcallzbl</groupId>-->
+        <!--            <artifactId>common-spring</artifactId>-->
+        <!--            <version>1.0-SNAPSHOT</version>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>com.mcallzbl</groupId>
-            <artifactId>common-user</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>common-aliyun-oss</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

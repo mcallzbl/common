@@ -12,6 +12,7 @@
         <module>common-spring</module>
         <module>common-user</module>
         <module>common-demo</module>
+        <module>common-aliyun-oss</module>
     </modules>
 
     <properties>
@@ -24,6 +25,7 @@
         <knief4j.version>4.5.0</knief4j.version>
         <jwt.version>0.12.6</jwt.version>
         <hutool.version>5.8.26</hutool.version>
+        <aliyun.version>1.1.8</aliyun.version>
     </properties>
 
     <dependencyManagement>
@@ -97,7 +99,12 @@
                 <version>${jwt.version}</version>
                 <scope>runtime</scope>
             </dependency>
-
+            <!-- https://mvnrepository.com/artifact/com.aliyun/sts20150401 -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>sts20150401</artifactId>
+                <version>${aliyun.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

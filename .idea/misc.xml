@@ -15,6 +15,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/common-demo/pom.xml" />
         <option value="$PROJECT_DIR$/common-user/pom.xml" />
+        <option value="$PROJECT_DIR$/common-aliyun-oss/pom.xml" />
       </list>
     </option>
   </component>
