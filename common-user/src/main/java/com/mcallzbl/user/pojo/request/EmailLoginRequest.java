@@ -19,12 +19,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "统一登录请求参数")
-public class LoginRequest {
+@Schema(description = "邮箱登录请求参数")
+public class EmailLoginRequest {
 
     @Email(message = "邮箱格式不正确")
     @NotNull(message = "邮箱不能为空")
-    @Schema(description = "邮箱", example = "user@example.com", required = true)
+    @Schema(description = "邮箱", example = "user@example.com")
     private String email;
 
     @Size(min = 6, message = "密码长度不能少于6位")

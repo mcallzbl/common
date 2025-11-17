@@ -7,8 +7,9 @@ import com.mcallzbl.user.config.SessionConfig;
 import com.mcallzbl.user.constants.AuthConstants;
 import com.mcallzbl.user.pojo.dto.TokenInfo;
 import com.mcallzbl.user.pojo.entity.User;
-import com.mcallzbl.user.pojo.request.LoginRequest;
+import com.mcallzbl.user.pojo.request.EmailLoginRequest;
 import com.mcallzbl.user.pojo.request.TokenRequest;
+import com.mcallzbl.user.pojo.request.UsernameLoginRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
 import com.mcallzbl.user.pojo.response.LoginResponse;
 import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
@@ -47,24 +48,26 @@ public class AuthController {
     private final EmailVerificationService emailVerificationService;
 
 
+    // ==================== 登录接口 ====================
+
     /**
-     * 用户登录
+     * 邮箱登录
      *
-     * @param loginRequest 登录请求参数
+     * @param emailLoginRequest 邮箱登录请求参数
      * @param response     HTTP响应对象（用于设置Cookie）
      * @return 登录成功返回用户信息和双Token
      */
     @Operation(
-            summary = "统一登录/注册接口",
+            summary = "邮箱登录接口",
             description = "支持邮箱+密码登录，以及邮箱+验证码登录。当使用验证码登录且用户不存在时，会自动注册新用户。"
     )
     @ResponseWrapper
-    @PostMapping("/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest,
-                                       HttpServletResponse response) {
-        log.debug("[com.mcallzbl.user.controller.AuthController.login()]" +
-                " params: loginRequest={}", loginRequest);
-        val user = authService.login(loginRequest);
+    @PostMapping("/email-login")
+    public Result<LoginResponse> emailLogin(@Valid @RequestBody EmailLoginRequest emailLoginRequest,
+                                           HttpServletResponse response) {
+        log.debug("[com.mcallzbl.user.controller.AuthController.emailLogin()]" +
+                " params: emailLoginRequest={}", emailLoginRequest);
+        val user = authService.loginByEmail(emailLoginRequest);
         if (user == null) {
             throw BusinessException.of("登录失败");
         }
@@ -79,6 +82,41 @@ public class AuthController {
                 .build()
         );
     }
+
+    /**
+     * 用户名登录
+     *
+     * @param usernameLoginRequest 用户名登录请求参数
+     * @param response     HTTP响应对象（用于设置Cookie）
+     * @return 登录成功返回用户信息和双Token
+     */
+    @Operation(
+            summary = "用户名登录接口",
+            description = "支持用户名+密码登录。用户必须已注册存在。"
+    )
+    @ResponseWrapper
+    @PostMapping("/username-login")
+    public Result<LoginResponse> usernameLogin(@Valid @RequestBody UsernameLoginRequest usernameLoginRequest,
+                                              HttpServletResponse response) {
+        log.debug("[com.mcallzbl.user.controller.AuthController.usernameLogin()]" +
+                " params: usernameLoginRequest={}", usernameLoginRequest);
+        val user = authService.loginByUsername(usernameLoginRequest);
+        if (user == null) {
+            throw BusinessException.of("登录失败");
+        }
+        val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
+        val refreshTokenInfo = generateRefreshTokenAndSetCookie(user, response);
+        return Result.success(LoginResponse.builder()
+                .accessToken(accessTokenInfo.getToken())
+                .refreshToken(refreshTokenInfo.getToken())
+                .nickname(user.getNickname())
+                .accessTokenExpiresIn(accessTokenInfo.getExpiration())
+                .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
+                .build()
+        );
+    }
+
+    // ==================== 其他接口 ====================
 
     /**
      * 发送邮箱验证码

@@ -31,7 +31,7 @@ public class VerificationEmailRequest {
     @Email(message = "邮箱格式不正确")
     private String email;
 
-    @Schema(description = "验证目的", example = "login")
+    @Schema(description = "验证目的", example = "loginByEmail")
     @NotNull(message = "验证目的不能为空")
     private Purpose purpose;
 
@@ -39,7 +39,7 @@ public class VerificationEmailRequest {
     public enum Purpose {
         RESET_PASSWORD("reset_password"),
         CHANGE_EMAIL("change_email"),
-        LOGIN("login");
+        LOGIN("loginByEmail");
 
         /**
          * value映射缓存

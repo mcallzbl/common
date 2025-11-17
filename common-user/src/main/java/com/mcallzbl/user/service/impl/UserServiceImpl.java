@@ -1,5 +1,6 @@
 package com.mcallzbl.user.service.impl;
 
+import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.enums.DeleteStatus;
 import com.mcallzbl.user.enums.Gender;
 import com.mcallzbl.user.enums.UserStatus;
@@ -10,11 +11,15 @@ import com.mcallzbl.user.utils.UsernameGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 /**
+ * 用户服务实现类
+ * 提供用户查询、创建和验证功能
+ *
  * @author mcallzbl
- * @version 1.0
+ * @version 2.0
  * @since 2025/10/26
  */
 @Slf4j
@@ -24,26 +29,107 @@ import org.springframework.validation.annotation.Validated;
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
+    // ==================== 直接查询方法（可能返回null） ====================
+
     /**
-     * 根据用户ID获取用户
+     * 直接根据用户ID查询用户（不验证状态）
      *
      * @param userId 用户ID
-     * @return 用户信息，如果用户不存在或状态不为1则返回null
+     * @return 用户信息，可能为null
      */
     @Override
-    public User getUserById(Long userId) {
+    public User findUserById(Long userId) {
         return userMapper.selectByUserId(userId);
     }
 
     /**
-     * 根据邮箱获取用户
+     * 直接根据邮箱查询用户（不验证状态）
      *
      * @param email 邮箱
-     * @return 用户信息，如果用户不存在或状态不可用则返回null
+     * @return 用户信息，可能为null
+     */
+    @Override
+    public User findUserByEmail(String email) {
+        return userMapper.selectByEmail(email);
+    }
+
+    /**
+     * 直接根据用户名查询用户（不验证状态）
+     *
+     * @param username 用户名
+     * @return 用户信息，可能为null
+     */
+    @Override
+    public User findUserByUsername(String username) {
+        return userMapper.selectByUsername(username);
+    }
+
+    // ==================== 验证查询方法（确保用户可用） ====================
+
+    /**
+     * 获取用户并验证其可用性
+     *
+     * @param userId 用户ID
+     * @return 用户信息，保证用户存在且可用
+     * @throws BusinessException 如果用户不存在或不可用
+     */
+    @Override
+    public User getUserById(Long userId) {
+        User user = findUserById(userId);
+        validateUserAvailable(user, "用户ID", userId.toString());
+        return user;
+    }
+
+    /**
+     * 获取用户并验证其可用性
+     *
+     * @param email 邮箱
+     * @return 用户信息，保证用户存在且可用
+     * @throws BusinessException 如果用户不存在或不可用
      */
     @Override
     public User getUserByEmail(String email) {
-        return userMapper.selectByEmail(email);
+        User user = findUserByEmail(email);
+        validateUserAvailable(user, "邮箱", email);
+        return user;
+    }
+
+    /**
+     * 获取用户并验证其可用性
+     *
+     * @param username 用户名
+     * @return 用户信息，保证用户存在且可用
+     * @throws BusinessException 如果用户不存在或不可用
+     */
+    @Override
+    public User getUserByUsername(String username) {
+        User user = findUserByUsername(username);
+        validateUserAvailable(user, "用户名", username);
+        return user;
+    }
+
+    // ==================== 私有验证方法 ====================
+
+    /**
+     * 验证用户是否可用
+     *
+     * @param user        用户对象
+     * @param fieldType  字段类型（用于错误信息）
+     * @param fieldValue 字段值（用于错误信息）
+     * @throws BusinessException 如果用户不可用
+     */
+    private void validateUserAvailable(User user, String fieldType, String fieldValue) {
+        if (user == null) {
+            throw BusinessException.of(fieldType + "不存在");
+        }
+
+        if (user.isInActive()) {
+            throw BusinessException.of("用户已被禁用");
+        }
+
+        if (user.getDeleteStatus().isDeleted()) {
+            throw BusinessException.of("用户已被删除");
+        }
     }
 
     /**
