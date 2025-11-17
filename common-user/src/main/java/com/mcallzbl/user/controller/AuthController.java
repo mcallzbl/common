@@ -54,7 +54,7 @@ public class AuthController {
      * 邮箱登录
      *
      * @param emailLoginRequest 邮箱登录请求参数
-     * @param response     HTTP响应对象（用于设置Cookie）
+     * @param response          HTTP响应对象（用于设置Cookie）
      * @return 登录成功返回用户信息和双Token
      */
     @Operation(
@@ -64,7 +64,7 @@ public class AuthController {
     @ResponseWrapper
     @PostMapping("/email-login")
     public Result<LoginResponse> emailLogin(@Valid @RequestBody EmailLoginRequest emailLoginRequest,
-                                           HttpServletResponse response) {
+                                            HttpServletResponse response) {
         log.debug("[com.mcallzbl.user.controller.AuthController.emailLogin()]" +
                 " params: emailLoginRequest={}", emailLoginRequest);
         val user = authService.loginByEmail(emailLoginRequest);
@@ -87,7 +87,7 @@ public class AuthController {
      * 用户名登录
      *
      * @param usernameLoginRequest 用户名登录请求参数
-     * @param response     HTTP响应对象（用于设置Cookie）
+     * @param response             HTTP响应对象（用于设置Cookie）
      * @return 登录成功返回用户信息和双Token
      */
     @Operation(
@@ -97,7 +97,7 @@ public class AuthController {
     @ResponseWrapper
     @PostMapping("/username-login")
     public Result<LoginResponse> usernameLogin(@Valid @RequestBody UsernameLoginRequest usernameLoginRequest,
-                                              HttpServletResponse response) {
+                                               HttpServletResponse response) {
         log.debug("[com.mcallzbl.user.controller.AuthController.usernameLogin()]" +
                 " params: usernameLoginRequest={}", usernameLoginRequest);
         val user = authService.loginByUsername(usernameLoginRequest);

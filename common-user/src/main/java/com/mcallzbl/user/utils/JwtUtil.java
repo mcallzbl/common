@@ -313,7 +313,7 @@ public class JwtUtil {
     /**
      * 检查Token是否在指定时间内过期（用于Token续期判断）
      *
-     * @param token JWT令牌
+     * @param token            JWT令牌
      * @param thresholdSeconds 阈值时间（秒）
      * @return true: 在指定时间内过期, false: 未在指定时间内过期
      */

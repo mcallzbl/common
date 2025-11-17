@@ -1,10 +1,9 @@
 package com.mcallzbl.user.config;
 
-import com.mcallzbl.user.filter.JwtAuthenticationFilter;
 import com.mcallzbl.user.filter.IpAuthenticationFilter;
+import com.mcallzbl.user.filter.JwtAuthenticationFilter;
 import com.mcallzbl.user.handler.CustomAccessDeniedHandler;
 import com.mcallzbl.user.handler.CustomAuthenticationEntryPoint;
-import com.mcallzbl.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,57 +55,57 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 禁用CSRF，因为我们使用JWT进行认证
-            .csrf(AbstractHttpConfigurer::disable)
+                // 禁用CSRF，因为我们使用JWT进行认证
+                .csrf(AbstractHttpConfigurer::disable)
 
-            // 配置CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 配置CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // 无状态会话管理
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 无状态会话管理
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            // 禁用默认登录页面
-            .formLogin(AbstractHttpConfigurer::disable)
+                // 禁用默认登录页面
+                .formLogin(AbstractHttpConfigurer::disable)
 
-            // 禁用HTTP Basic认证
-            .httpBasic(AbstractHttpConfigurer::disable)
+                // 禁用HTTP Basic认证
+                .httpBasic(AbstractHttpConfigurer::disable)
 
-            // 禁用默认登出
-            .logout(AbstractHttpConfigurer::disable)
+                // 禁用默认登出
+                .logout(AbstractHttpConfigurer::disable)
 
-            // 异常处理
-            .exceptionHandling(exception -> exception
-                .accessDeniedHandler(accessDeniedHandler)  // 权限不足处理
-                .authenticationEntryPoint(authenticationEntryPoint)  // 未认证处理
-            )
+                // 异常处理
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(accessDeniedHandler)  // 权限不足处理
+                        .authenticationEntryPoint(authenticationEntryPoint)  // 未认证处理
+                )
 
-            // 请求授权配置 - 对应原WebConfig中的excludePathPatterns
-            .authorizeHttpRequests(authz -> authz
-                // 公开访问的端点（不需要认证）
-                .requestMatchers("/api/v1/auth/login").permitAll()
-                .requestMatchers("/api/v1/auth/registration").permitAll()
-                .requestMatchers("/api/v1/auth/verification/emails").permitAll()
-                .requestMatchers("/api/v1/auth/refresh").permitAll()
-                .requestMatchers("/api/v1/auth/logout").permitAll()
-                .requestMatchers("/api/v1/captcha").permitAll()
+                // 请求授权配置 - 对应原WebConfig中的excludePathPatterns
+                .authorizeHttpRequests(authz -> authz
+                        // 公开访问的端点（不需要认证）
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/registration").permitAll()
+                        .requestMatchers("/api/v1/auth/verification/emails").permitAll()
+                        .requestMatchers("/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/v1/auth/logout").permitAll()
+                        .requestMatchers("/api/v1/captcha").permitAll()
 
-                // API文档相关
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll()
-                .requestMatchers("/v3/api-docs/**").permitAll()
-                .requestMatchers("/knife4j/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
+                        // API文档相关
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/knife4j/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
 
-                // 其他所有请求都需要认证
-                .anyRequest().authenticated()
-            )
+                        // 其他所有请求都需要认证
+                        .anyRequest().authenticated()
+                )
 
-            // 添加自定义过滤器 - 对应原拦截器的优先级
-            // IP过滤器优先级最高（order=0）- 对应原ipInterceptor order=0
-            .addFilterBefore(ipAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            // JWT认证过滤器（order=1）- 对应原jwtAuthInterceptor order=1
-            .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // 添加自定义过滤器 - 对应原拦截器的优先级
+                // IP过滤器优先级最高（order=0）- 对应原ipInterceptor order=0
+                .addFilterBefore(ipAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // JWT认证过滤器（order=1）- 对应原jwtAuthInterceptor order=1
+                .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

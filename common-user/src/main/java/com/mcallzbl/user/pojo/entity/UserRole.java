@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.mcallzbl.common.BaseEntity;
 import lombok.*;
 
-import java.time.Instant;
-
 /**
  * 用户角色关联实体类
  *

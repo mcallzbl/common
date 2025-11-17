@@ -27,11 +27,6 @@ public enum RoleStatus {
      */
     ENABLED(1, "启用");
 
-    @EnumValue
-    private final Integer code;
-
-    private final String description;
-
     private static final Map<String, RoleStatus> NAME_MAP = new ConcurrentHashMap<>();
 
     static {
@@ -39,6 +34,10 @@ public enum RoleStatus {
             NAME_MAP.put(status.name().toLowerCase(), status);
         }
     }
+
+    @EnumValue
+    private final Integer code;
+    private final String description;
 
     RoleStatus(Integer code, String description) {
         this.code = code;
@@ -57,14 +56,6 @@ public enum RoleStatus {
     }
 
     /**
-     * JSON序列化时返回枚举名称
-     */
-    @JsonValue
-    public String getName() {
-        return this.name();
-    }
-
-    /**
      * 根据代码获取枚举
      */
     public static RoleStatus fromCode(Integer code) {
@@ -77,5 +68,13 @@ public enum RoleStatus {
             }
         }
         return null;
+    }
+
+    /**
+     * JSON序列化时返回枚举名称
+     */
+    @JsonValue
+    public String getName() {
+        return this.name();
     }
 }

@@ -15,7 +15,7 @@ applications. The project provides standardized response wrapping mechanisms and
 - **common-spring**: Spring Boot integration module containing:
     - Unified response wrapper system (`@ResponseWrapper` annotation)
     - Global response body advice (`GlobalResponseWrapper`)
-    - Common result transfer DTO (`CommonResultTransferDTO`)
+    - Common result transfer VO (`CommonResultTransferVO`)
     - Business exception handling (`BusinessException`)
     - Standardized status codes (`ResultCode` enum)
 
@@ -115,6 +115,7 @@ controller:
 All entity classes must extend `BaseEntity` for standardized audit fields and common functionality:
 
 ```java
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
@@ -149,7 +150,9 @@ public class YourEntity extends BaseEntity {
 ### Enum Usage Guidelines
 
 **Database Mapping Enums** (for status fields, etc.):
+
 ```java
+
 @Getter
 public enum YourStatus {
     ACTIVE(1, "启用"),
@@ -170,6 +173,7 @@ public enum YourStatus {
 ```
 
 **JSON Conversion Support**:
+
 - Use `@JsonValue` for serialization
 - Use `@JsonCreator` for deserialization
 - Implement case-insensitive string conversion using static Map

@@ -6,12 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 /**
  * Spring Security用户详情实现类
@@ -27,7 +25,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /**
      * -- GETTER --
-     *  获取用户实体
+     * 获取用户实体
      */
     private User user;
 

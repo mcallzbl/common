@@ -7,12 +7,9 @@ import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.EmailLoginRequest;
 import com.mcallzbl.user.pojo.request.UsernameLoginRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
-import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
 import com.mcallzbl.user.service.AuthService;
 import com.mcallzbl.user.service.EmailVerificationService;
 import com.mcallzbl.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -84,10 +81,10 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 更新用户登录信息并保存到数据库
      *
-     * @param user        用户对象
-     * @param clientIp    客户端IP
-     * @param loginType   登录类型（用于日志）
-     * @param loginValue  登录值（用于日志）
+     * @param user       用户对象
+     * @param clientIp   客户端IP
+     * @param loginType  登录类型（用于日志）
+     * @param loginValue 登录值（用于日志）
      * @return 更新后的用户信息
      */
     private User updateUserLoginInfo(User user, String clientIp, String loginType, String loginValue) {
@@ -129,8 +126,8 @@ public class AuthServiceImpl implements AuthService {
      * 通用密码验证方法
      * 验证密码正确性和用户状态
      *
-     * @param user        用户对象
-     * @param password    待验证的密码
+     * @param user     用户对象
+     * @param password 待验证的密码
      */
     private void validateUserPassword(User user, String password) {
         if (user == null || !StringUtils.hasText(user.getPasswordHash())) {
@@ -174,29 +171,4 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    /**
-     * 刷新访问令牌
-     *
-     * @param refreshToken 刷新Token
-     * @param request      HTTP请求对象（用于获取设备信息等）
-     * @param response     HTTP响应对象（用于更新Cookie）
-     * @return 新的访问令牌和刷新令牌
-     */
-    @Override
-    public RefreshTokenResponse refreshToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
-        return null;
-    }
-
-    /**
-     * 用户登出
-     *
-     * @param accessToken  访问令牌
-     * @param refreshToken 刷新令牌
-     * @param response     HTTP响应对象（用于清除Cookie）
-     * @return 登出结果VO
-     */
-    @Override
-    public String logout(String accessToken, String refreshToken, HttpServletResponse response) {
-        return "";
-    }
 }

@@ -42,7 +42,7 @@ public class DemoController {
     private final CommonI18nUtils commonI18NUtils;
     private final I18nBusinessException i18nBusinessException;
 
-      // ==================== Spring Security用户信息获取示例 ====================
+    // ==================== Spring Security用户信息获取示例 ====================
 
     /**
      * 获取当前用户信息 - 兼容方式（使用原ThreadLocal）

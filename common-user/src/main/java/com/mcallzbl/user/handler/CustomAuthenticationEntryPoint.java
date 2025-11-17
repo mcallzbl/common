@@ -31,8 +31,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request,
-                        HttpServletResponse response,
-                        AuthenticationException authException) throws IOException, ServletException {
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
 
         log.warn("未认证访问被拒绝: {} - {}", request.getRequestURI(), authException.getMessage());
 
@@ -43,8 +43,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         // 构建统一响应格式
         CommonResultTransferVO<Void> result = CommonResultTransferVO.failed(
-            ResultCode.UNAUTHORIZED.getCode(),
-            "访问被拒绝，请先登录"
+                ResultCode.UNAUTHORIZED.getCode(),
+                "访问被拒绝，请先登录"
         );
 
         // 写入响应

@@ -7,8 +7,6 @@ import com.mcallzbl.common.BaseEntity;
 import com.mcallzbl.user.enums.RoleStatus;
 import lombok.*;
 
-import java.time.Instant;
-
 /**
  * 角色信息实体类
  *

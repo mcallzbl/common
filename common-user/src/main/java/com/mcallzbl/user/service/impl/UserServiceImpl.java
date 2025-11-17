@@ -11,7 +11,6 @@ import com.mcallzbl.user.utils.UsernameGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -113,7 +112,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 验证用户是否可用
      *
-     * @param user        用户对象
+     * @param user       用户对象
      * @param fieldType  字段类型（用于错误信息）
      * @param fieldValue 字段值（用于错误信息）
      * @throws BusinessException 如果用户不可用

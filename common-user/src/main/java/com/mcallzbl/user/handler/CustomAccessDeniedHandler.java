@@ -31,8 +31,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request,
-                      HttpServletResponse response,
-                      AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                       HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
         log.warn("权限不足访问被拒绝: {} - {}", request.getRequestURI(), accessDeniedException.getMessage());
 
@@ -43,8 +43,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         // 构建统一响应格式
         CommonResultTransferVO<Void> result = CommonResultTransferVO.failed(
-            ResultCode.FORBIDDEN.getCode(),
-            "权限不足，无法访问该资源"
+                ResultCode.FORBIDDEN.getCode(),
+                "权限不足，无法访问该资源"
         );
 
         // 写入响应
