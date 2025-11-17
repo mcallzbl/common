@@ -108,5 +108,127 @@ controller:
 @Tag(name = "认证管理", description = "用户认证相关接口，包括登录、注册、登出、刷新Token等")
 ```
 
+## Entity Class Organization
+
+### Base Entity Structure
+
+All entity classes must extend `BaseEntity` for standardized audit fields and common functionality:
+
+```java
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@TableName("table_name")
+public class YourEntity extends BaseEntity {
+
+    @TableId(value = "id")
+    private Long id;
+
+    // Business fields...
+
+    /**
+     * 软删除方法
+     */
+    public void softDelete(String reason) {
+        this.deleteStatus = DeleteStatus.DELETED;
+        this.deletedTime = Instant.now();
+        this.deletedReason = reason;
+    }
+}
+```
+
+### DateTime Field Standards
+
+- **Use `Instant` type** for all datetime fields to ensure timezone independence
+- **Database JDBC URL** should specify timezone: `serverTimezone=UTC`
+- **No automatic fill annotations** - handle timestamps manually in service layer
+- **Time field mapping**: `Instant` ↔ `TIMESTAMP` or `DATETIME` columns
+
+### Enum Usage Guidelines
+
+**Database Mapping Enums** (for status fields, etc.):
+```java
+@Getter
+public enum YourStatus {
+    ACTIVE(1, "启用"),
+    INACTIVE(0, "禁用");
+
+    @EnumValue
+    private final Integer code;
+    private final String description;
+
+    // Add string conversion with static map
+    private static final Map<String, YourStatus> NAME_MAP = new ConcurrentHashMap<>();
+
+    @JsonCreator
+    public static YourStatus fromString(String value) {
+        return NAME_MAP.get(value.toLowerCase().trim());
+    }
+}
+```
+
+**JSON Conversion Support**:
+- Use `@JsonValue` for serialization
+- Use `@JsonCreator` for deserialization
+- Implement case-insensitive string conversion using static Map
+- Always include `@EnumValue` for database mapping
+
+### Entity Class Template
+
+```java
+package com.mcallzbl.user.pojo.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.mcallzbl.common.BaseEntity;
+import com.mcallzbl.common.enums.DeleteStatus;
+import lombok.*;
+
+import java.time.Instant;
+
+/**
+ * 实体类描述
+ *
+ * @author mcallzbl
+ * @since 2025-MM-DD
+ */
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@TableName("table_name")
+public class YourEntity extends BaseEntity {
+
+    /**
+     * 主键ID
+     */
+    @TableId(value = "id")
+    private Long id;
+
+    /**
+     * 业务字段
+     */
+    @TableField(value = "field_name")
+    private String fieldName;
+
+    /**
+     * 状态字段（使用枚举）
+     */
+    @TableField(value = "status")
+    private YourStatus status = YourStatus.DEFAULT;
+
+    /**
+     * 时间字段（使用Instant）
+     */
+    @TableField(value = "created_time")
+    private Instant createdTime;
+
+}
+```
+
 通用：
 自动在每个方法前加上注释
