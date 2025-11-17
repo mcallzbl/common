@@ -1,16 +1,12 @@
 package com.mcallzbl.user.controller;
 
-import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.Result;
 import com.mcallzbl.common.annotation.ResponseWrapper;
 import com.mcallzbl.user.config.SessionConfig;
 import com.mcallzbl.user.constants.AuthConstants;
 import com.mcallzbl.user.pojo.dto.TokenInfo;
 import com.mcallzbl.user.pojo.entity.User;
-import com.mcallzbl.user.pojo.request.EmailLoginRequest;
-import com.mcallzbl.user.pojo.request.TokenRequest;
-import com.mcallzbl.user.pojo.request.UsernameLoginRequest;
-import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
+import com.mcallzbl.user.pojo.request.*;
 import com.mcallzbl.user.pojo.response.LoginResponse;
 import com.mcallzbl.user.pojo.response.RefreshTokenResponse;
 import com.mcallzbl.user.pojo.response.VerificationEmailResponse;
@@ -68,19 +64,7 @@ public class AuthController {
         log.debug("[com.mcallzbl.user.controller.AuthController.emailLogin()]" +
                 " params: emailLoginRequest={}", emailLoginRequest);
         val user = authService.loginByEmail(emailLoginRequest);
-        if (user == null) {
-            throw BusinessException.of("登录失败");
-        }
-        val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
-        val refreshTokenInfo = generateRefreshTokenAndSetCookie(user, response);
-        return Result.success(LoginResponse.builder()
-                .accessToken(accessTokenInfo.getToken())
-                .refreshToken(refreshTokenInfo.getToken())
-                .nickname(user.getNickname())
-                .accessTokenExpiresIn(accessTokenInfo.getExpiration())
-                .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
-                .build()
-        );
+        return generateLoginResponse(user, response);
     }
 
     /**
@@ -101,15 +85,49 @@ public class AuthController {
         log.debug("[com.mcallzbl.user.controller.AuthController.usernameLogin()]" +
                 " params: usernameLoginRequest={}", usernameLoginRequest);
         val user = authService.loginByUsername(usernameLoginRequest);
-        if (user == null) {
-            throw BusinessException.of("登录失败");
-        }
+        return generateLoginResponse(user, response);
+    }
+
+    /**
+     * 用户名密码注册
+     *
+     * @param usernameRegistrationRequest 用户名注册请求参数
+     * @param response                    HTTP响应对象（用于设置Cookie）
+     * @return 注册成功返回用户信息和双Token
+     */
+    @Operation(
+            summary = "用户名注册接口",
+            description = "支持用户名+邮箱+密码注册。需要管理员开启此功能，默认关闭。注册成功后自动登录。"
+    )
+    @ResponseWrapper
+    @PostMapping("/username-registration")
+    public Result<LoginResponse> usernameRegistration(@Valid @RequestBody UsernameRegistrationRequest usernameRegistrationRequest,
+                                                      HttpServletResponse response) {
+        log.debug("[com.mcallzbl.user.controller.AuthController.usernameRegistration()]" +
+                " params: usernameRegistrationRequest={}", usernameRegistrationRequest);
+
+        val user = authService.registerByUsername(usernameRegistrationRequest);
+        return generateLoginResponse(user, response);
+    }
+
+    // ==================== 私有方法 ====================
+
+    /**
+     * 生成登录响应
+     * 统一处理用户登录/注册成功后的响应生成
+     *
+     * @param user     用户对象
+     * @param response HTTP响应对象（用于设置Cookie）
+     * @return 登录响应对象
+     */
+    private Result<LoginResponse> generateLoginResponse(User user, HttpServletResponse response) {
         val accessTokenInfo = jwtUtil.generateAccessToken(String.valueOf(user.getId()), null);
         val refreshTokenInfo = generateRefreshTokenAndSetCookie(user, response);
         return Result.success(LoginResponse.builder()
                 .accessToken(accessTokenInfo.getToken())
                 .refreshToken(refreshTokenInfo.getToken())
                 .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
                 .accessTokenExpiresIn(accessTokenInfo.getExpiration())
                 .refreshTokenExpiresIn(refreshTokenInfo.getExpiration())
                 .build()

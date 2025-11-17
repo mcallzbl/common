@@ -82,23 +82,23 @@ public class SecurityConfig {
 
                 // 请求授权配置 - 对应原WebConfig中的excludePathPatterns
                 .authorizeHttpRequests(authz -> authz
-                        // 公开访问的端点（不需要认证）
-                        .requestMatchers("/api/v1/auth/login").permitAll()
-                        .requestMatchers("/api/v1/auth/registration").permitAll()
-                        .requestMatchers("/api/v1/auth/verification/emails").permitAll()
-                        .requestMatchers("/api/v1/auth/refresh").permitAll()
-                        .requestMatchers("/api/v1/auth/logout").permitAll()
-                        .requestMatchers("/api/v1/captcha").permitAll()
+                                // 公开访问的端点（不需要认证）
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+//                        .requestMatchers("/api/v1/auth/registration").permitAll()
+//                        .requestMatchers("/api/v1/auth/verification/emails").permitAll()
+//                        .requestMatchers("/api/v1/auth/refresh").permitAll()
+//                        .requestMatchers("/api/v1/auth/logout").permitAll()
+                                .requestMatchers("/api/v1/captcha").permitAll()
 
-                        // API文档相关
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/knife4j/**").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
+                                // API文档相关
+                                .requestMatchers("/error").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
+                                .requestMatchers("/knife4j/**").permitAll()
+                                .requestMatchers("/actuator/**").permitAll()
 
-                        // 其他所有请求都需要认证
-                        .anyRequest().authenticated()
+                                // 其他所有请求都需要认证
+                                .anyRequest().authenticated()
                 )
 
                 // 添加自定义过滤器 - 对应原拦截器的优先级

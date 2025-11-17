@@ -2,10 +2,12 @@ package com.mcallzbl.user.service.impl;
 
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.ResultCode;
+import com.mcallzbl.user.config.RegistrationConfig;
 import com.mcallzbl.user.context.IpContext;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.EmailLoginRequest;
 import com.mcallzbl.user.pojo.request.UsernameLoginRequest;
+import com.mcallzbl.user.pojo.request.UsernameRegistrationRequest;
 import com.mcallzbl.user.pojo.request.VerificationEmailRequest;
 import com.mcallzbl.user.service.AuthService;
 import com.mcallzbl.user.service.EmailVerificationService;
@@ -31,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailVerificationService emailVerificationService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final RegistrationConfig registrationConfig;
 
     @Override
     @Transactional
@@ -74,6 +77,49 @@ public class AuthServiceImpl implements AuthService {
 
         // 更新用户登录信息并保存
         return updateUserLoginInfo(user, clientIp, "用户名", user.getUsername());
+    }
+
+    /**
+     * 用户名注册
+     *
+     * @param usernameRegistrationRequest 用户名注册请求
+     * @return 注册成功的用户信息
+     */
+    @Override
+    @Transactional
+    public User registerByUsername(UsernameRegistrationRequest usernameRegistrationRequest) {
+        String clientIp = IpContext.getIpOrDefault("127.0.0.1");
+        log.info("用户注册尝试 - 用户名: {}, 邮箱: {}, IP地址: {}",
+                usernameRegistrationRequest.getUsername(),
+                usernameRegistrationRequest.getEmail(),
+                clientIp);
+
+        // 1. 检查注册功能是否开启
+        if (!registrationConfig.isUsernamePasswordEnabled()) {
+            throw BusinessException.of("用户名注册功能已关闭");
+        }
+
+        // 2. 验证基础参数
+        validateRegistrationRequest(usernameRegistrationRequest);
+
+        // 3. 检查唯一性
+        validateUniqueness(usernameRegistrationRequest);
+
+        // 4. TODO: 检查注册频率限制（IP和邮箱）
+        // checkRateLimit(usernameRegistrationRequest, clientIp);
+
+        // 5. 创建用户
+        User user = createUserFromRequest(usernameRegistrationRequest);
+
+        // 6. 保存到数据库（用户已在createUserFromRequest中插入，这里验证是否成功）
+        if (user.getId() == null) {
+            throw BusinessException.of("注册失败，请稍后再试");
+        }
+
+        log.info("用户注册成功 - userId: {}, 用户名: {}, 邮箱: {}, IP地址: {}",
+                user.getId(), user.getUsername(), user.getEmail(), clientIp);
+
+        return user;
     }
 
     // ==================== 私有方法 ====================
@@ -170,5 +216,66 @@ public class AuthServiceImpl implements AuthService {
         return user;
     }
 
+    // ==================== 注册相关私有方法 ====================
+
+    /**
+     * 验证注册请求参数
+     *
+     * @param request 注册请求
+     */
+    private void validateRegistrationRequest(UsernameRegistrationRequest request) {
+        // 验证密码一致性
+        if (!request.isPasswordMatching()) {
+            throw BusinessException.of("两次输入的密码不一致");
+        }
+    }
+
+    /**
+     * 检查用户名和邮箱的唯一性
+     *
+     * @param request 注册请求
+     */
+    private void validateUniqueness(UsernameRegistrationRequest request) {
+        // 检查用户名唯一性
+        if (registrationConfig.isCheckUsernameUnique()) {
+            User existingUserByUsername = userService.findUserByUsername(request.getUsername());
+            if (existingUserByUsername != null) {
+                throw BusinessException.of("用户名已存在");
+            }
+        }
+
+        // 检查邮箱唯一性
+        if (registrationConfig.isCheckEmailUnique() && StringUtils.hasText(request.getEmail())) {
+            User existingUserByEmail = userService.findUserByEmail(request.getEmail());
+            if (existingUserByEmail != null) {
+                throw BusinessException.of("邮箱已被注册");
+            }
+        }
+    }
+
+    /**
+     * 从注册请求创建用户对象
+     *
+     * @param request 注册请求
+     * @return 用户对象
+     */
+    private User createUserFromRequest(UsernameRegistrationRequest request) {
+        User newUser = User.builder()
+                .username(request.getUsername())
+                .email(registrationConfig.isEmailRequired() ? request.getEmail() : null)
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .nickname(StringUtils.hasText(request.getNickname()) ?
+                        request.getNickname() : request.getUsername())
+                .emailVerified(false)  // 用户名注册默认邮箱未验证
+                .build();
+
+        // 插入用户到数据库
+        boolean success = userService.insertUser(newUser);
+        if (!success) {
+            throw BusinessException.of("用户创建失败");
+        }
+
+        return newUser;
+    }
 
 }

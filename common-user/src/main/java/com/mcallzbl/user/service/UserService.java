@@ -76,6 +76,14 @@ public interface UserService {
     User createUserByEmail(String email);
 
     /**
+     * 插入新用户到数据库
+     *
+     * @param user 要插入的用户实体
+     * @return 插入是否成功
+     */
+    boolean insertUser(User user);
+
+    /**
      * 通过id更新用户信息
      *
      * @param user 要更新的用户实体

@@ -3,6 +3,7 @@ package com.mcallzbl.user.service;
 import com.mcallzbl.user.pojo.entity.User;
 import com.mcallzbl.user.pojo.request.EmailLoginRequest;
 import com.mcallzbl.user.pojo.request.UsernameLoginRequest;
+import com.mcallzbl.user.pojo.request.UsernameRegistrationRequest;
 
 /**
  * 认证服务接口
@@ -29,5 +30,13 @@ public interface AuthService {
      * @return 用户信息
      */
     User loginByUsername(UsernameLoginRequest usernameLoginRequest);
+
+    /**
+     * 用户名注册
+     *
+     * @param usernameRegistrationRequest 用户名注册请求
+     * @return 注册成功的用户信息
+     */
+    User registerByUsername(UsernameRegistrationRequest usernameRegistrationRequest);
 
 }

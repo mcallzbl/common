@@ -153,6 +153,18 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 插入新用户到数据库
+     *
+     * @param user 要插入的用户实体
+     * @return 插入是否成功
+     */
+    @Override
+    public boolean insertUser(User user) {
+        int insertCount = userMapper.insert(user);
+        return insertCount > 0;
+    }
+
+    /**
      * 通过id更新用户信息
      *
      * @param user 要更新的用户实体
