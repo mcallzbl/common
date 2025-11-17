@@ -20,10 +20,12 @@ import java.io.IOException;
  * @author mcallzbl
  * @version 1.0
  * @since 2025/11/1
+ * @deprecated 已被 JwtAuthenticationFilter 替代，集成到Spring Security过滤器链中
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Deprecated
 public class JwtAuthInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;

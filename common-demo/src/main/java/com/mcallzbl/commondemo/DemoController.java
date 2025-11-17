@@ -7,6 +7,8 @@ import com.mcallzbl.common.annotation.NoResponseWrapper;
 import com.mcallzbl.common.annotation.ResponseWrapper;
 import com.mcallzbl.common.exception.I18nBusinessException;
 import com.mcallzbl.common.util.CommonI18nUtils;
+import com.mcallzbl.user.context.UserContext;
+import com.mcallzbl.user.security.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -36,6 +41,83 @@ public class DemoController {
 
     private final CommonI18nUtils commonI18NUtils;
     private final I18nBusinessException i18nBusinessException;
+
+      // ==================== Spring Security用户信息获取示例 ====================
+
+    /**
+     * 获取当前用户信息 - 兼容方式（使用原ThreadLocal）
+     * GET /demo/me
+     */
+    @ResponseWrapper
+    @GetMapping("/me")
+    @Operation(summary = "获取当前用户（兼容方式）", description = "使用UserContext.ThreadLocal获取当前用户信息")
+    public Result<com.mcallzbl.user.pojo.entity.User> getCurrentUserCompatible() {
+        return Result.success(UserContext.getCurrentUser());
+    }
+
+    /**
+     * 获取当前用户信息 - Spring Security方式1（SecurityContextHolder）
+     * GET /demo/me-security
+     */
+    @ResponseWrapper
+    @GetMapping("/me-security")
+    @Operation(summary = "获取当前用户（SecurityContextHolder）", description = "使用Spring Security上下文获取当前用户信息")
+    public Result<com.mcallzbl.user.pojo.entity.User> getCurrentUserBySecurityContext() {
+        try {
+            // 获取认证对象
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication != null && authentication.isAuthenticated()) {
+                // 获取用户详情
+                UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                com.mcallzbl.user.pojo.entity.User user = userDetails.getUser();
+                return Result.success(user);
+            }
+
+            return Result.failed("用户未登录");
+        } catch (Exception e) {
+            log.error("获取用户信息失败", e);
+            return Result.failed("获取用户信息失败");
+        }
+    }
+
+    /**
+     * 获取当前用户信息 - Spring Security方式2（@AuthenticationPrincipal注解）
+     * GET /demo/me-annotation
+     */
+    @ResponseWrapper
+    @GetMapping("/me-annotation")
+    @Operation(summary = "获取当前用户（@AuthenticationPrincipal）", description = "使用@AuthenticationPrincipal注解获取当前用户信息，推荐方式")
+    public Result<com.mcallzbl.user.pojo.entity.User> getCurrentUserByAnnotation(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        if (userDetails != null) {
+            return Result.success(userDetails.getUser());
+        }
+
+        return Result.failed("用户未登录");
+    }
+
+    /**
+     * 获取当前用户信息 - Spring Security方式3（仅获取用户名）
+     * GET /demo/me-username
+     */
+    @ResponseWrapper
+    @GetMapping("/me-username")
+    @Operation(summary = "获取当前用户名", description = "仅获取当前用户的用户名信息")
+    public Result<String> getCurrentUsername() {
+        try {
+            // 获取认证对象的用户名
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                return Result.success(authentication.getName());
+            }
+            return Result.failed("用户未登录");
+        } catch (Exception e) {
+            log.error("获取用户名失败", e);
+            return Result.failed("获取用户名失败");
+        }
+    }
 
     @ResponseWrapper
     @GetMapping("/hello")

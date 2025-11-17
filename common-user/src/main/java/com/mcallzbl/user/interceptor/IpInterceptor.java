@@ -16,9 +16,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
  *
  * @author mcallzbl
  * @since 2025-11-01
+ * @deprecated 已被 IpAuthenticationFilter 替代，集成到Spring Security过滤器链中
  */
 @Slf4j
 @Component
+@Deprecated
 public class IpInterceptor implements HandlerInterceptor {
 
     @Override

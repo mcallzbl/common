@@ -279,4 +279,110 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+    /**
+     * 检查Token是否过期
+     *
+     * @param token JWT令牌
+     * @return true: 已过期, false: 未过期
+     */
+    public boolean isTokenExpired(String token) {
+        try {
+            Date expiration = extractExpiration(token);
+            return expiration.before(new Date());
+        } catch (Exception e) {
+            // Token解析失败也视为过期
+            return true;
+        }
+    }
+
+    /**
+     * 检查Token是否有效（未过期且格式正确）
+     *
+     * @param token JWT令牌
+     * @return true: 有效, false: 无效
+     */
+    public boolean isTokenValid(String token) {
+        try {
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * 检查Token是否在指定时间内过期（用于Token续期判断）
+     *
+     * @param token JWT令牌
+     * @param thresholdSeconds 阈值时间（秒）
+     * @return true: 在指定时间内过期, false: 未在指定时间内过期
+     */
+    public boolean isTokenExpiringSoon(String token, long thresholdSeconds) {
+        try {
+            Date expiration = extractExpiration(token);
+            long currentTime = System.currentTimeMillis();
+            long expirationTime = expiration.getTime();
+            long thresholdTime = thresholdSeconds * 1000;
+
+            return (expirationTime - currentTime) <= thresholdTime;
+        } catch (Exception e) {
+            return true; // 解析失败视为需要立即过期
+        }
+    }
+
+    /**
+     * 获取Token剩余有效时间（秒）
+     *
+     * @param token JWT令牌
+     * @return 剩余有效时间（秒），如果token无效返回0
+     */
+    public long getTokenRemainingSeconds(String token) {
+        try {
+            Date expiration = extractExpiration(token);
+            long currentTime = System.currentTimeMillis();
+            long expirationTime = expiration.getTime();
+            long remainingTime = (expirationTime - currentTime) / 1000;
+
+            return Math.max(0, remainingTime);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    /**
+     * 获取Token类型（access_token 或 refresh_token）
+     *
+     * @param token JWT令牌
+     * @return Token类型，如果无法获取返回null
+     */
+    public String getTokenType(String token) {
+        try {
+            Object typeClaim = extractClaim(token, "type");
+            return typeClaim != null ? typeClaim.toString() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 检查Token是否为访问令牌
+     *
+     * @param token JWT令牌
+     * @return true: 是访问令牌, false: 不是访问令牌
+     */
+    public boolean isAccessToken(String token) {
+        String type = getTokenType(token);
+        return "access_token".equals(type);
+    }
+
+    /**
+     * 检查Token是否为刷新令牌
+     *
+     * @param token JWT令牌
+     * @return true: 是刷新令牌, false: 不是刷新令牌
+     */
+    public boolean isRefreshToken(String token) {
+        String type = getTokenType(token);
+        return "refresh_token".equals(type);
+    }
 }
