@@ -1,8 +1,32 @@
-# Common Components Library
+**[🇨🇳 中文](#-个人自用---快速启动-spring-boot-项目的公共组件库)** | **English**
+
+# Common Components Library | Spring Boot Starter Template | Java Components
 
 > 🔧 **Personal Use** - Quick start Spring Boot project component library
 
+> **📦 What you'll get:**
+> - ⚡ **Unified API Response Wrapper** - Standardize your API responses instantly
+> - 🛡️ **Global Exception Handler** - Handle errors gracefully across your application
+> - 👤 **Ready-to-Use Email Login Module** - Complete authentication system out of the box
+> - 🌍 **Internationalization Support** - Multi-language ready
+> - ☁️ **File Upload with Aliyun OSS** - High-performance cloud storage
+
 ⚠️ **Important Notice**: This project is **not published** to Maven Central Repository. It's a personal collection of reusable components designed for quick project startup through source code copying.
+
+**Keywords**: Spring Boot, Java 17, Maven, Authentication, JWT, File Upload, User Management, API Template, Microservices, Spring Security, MyBatis Plus, OSS, Common Library, Components Library, Quick Start
+
+## 🤝 Community & Feedback
+
+**This project is primarily for personal use, but I warmly welcome:**
+- 🔍 **Code reviews** and design feedback
+- 💡 **Better suggestions** for architecture improvements
+- 🐛 **Bug reports** and issue identification
+- 🚀 **Feature requests** and enhancement ideas
+- 📝 **Documentation improvements**
+
+**Feel free to open an issue or submit a pull request if you find any design flaws, have suggestions for improvements, or want to contribute!**
+
+---
 
 ## 🏗️ Project Architecture
 
@@ -246,7 +270,27 @@ After starting the `common-demo` application, visit:
 
 > 🔧 **个人自用** - 快速启动 Spring Boot 项目的公共组件库
 
+> **📦 你将获得:**
+> - ⚡ **统一 API 响应包装** - 立即标准化你的API响应格式
+> - 🛡️ **全局异常处理** - 在整个应用中优雅地处理错误
+> - 👤 **开箱即用的邮箱登录模块** - 完整的认证系统
+> - 🌍 **国际化支持** - 多语言就绪
+> - ☁️ **阿里云 OSS 文件上传** - 高性能云存储
+
 ⚠️ **重要提醒**: 此项目**未上传**到Maven中央仓库，是个人自用的公共组件库，通过源码复制方式快速启动项目。
+
+## 🤝 社区与反馈
+
+**这个项目主要用于个人使用，但我热忱欢迎：**
+- 🔍 **代码审查**和设计反馈
+- 💡 **架构改进**的更好建议
+- 🐛 **问题报告**和缺陷识别
+- 🚀 **功能请求**和增强想法
+- 📝 **文档改进**建议
+
+**如果您发现任何设计缺陷、有改进建议或想要贡献，欢迎随时提交 Issue 或 Pull Request！**
+
+---
 
 ## 🏗️ 项目架构
 
@@ -485,3 +529,7 @@ mvn clean install
 *💡 **提示**: 这是一个个人自用的快速开发工具库，主要为了提高新项目启动效率。所有模块都经过实际项目验证，可以放心使用。*
 
 *🔄 **更新**: 持续根据新项目需求进行功能扩展和优化改进。*
+
+---
+
+**[↑ Back to English](#readme)**
