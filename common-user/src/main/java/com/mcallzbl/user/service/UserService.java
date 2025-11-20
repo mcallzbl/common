@@ -1,6 +1,7 @@
 package com.mcallzbl.user.service;
 
 import com.mcallzbl.user.pojo.entity.User;
+import com.mcallzbl.user.pojo.vo.UserVO;
 
 /**
  * 用户服务接口
@@ -90,4 +91,12 @@ public interface UserService {
      * @return 更新是否成功
      */
     boolean updateUser(User user);
+
+    /**
+     * 获取当前登录用户信息并转换为VO
+     *
+     * @return 用户信息VO
+     * @throws com.mcallzbl.common.BusinessException 如果用户未登录
+     */
+    UserVO getCurrentUserVO();
 }

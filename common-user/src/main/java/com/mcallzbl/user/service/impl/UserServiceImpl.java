@@ -2,10 +2,12 @@ package com.mcallzbl.user.service.impl;
 
 import com.mcallzbl.common.BusinessException;
 import com.mcallzbl.common.enums.DeleteStatus;
+import com.mcallzbl.user.context.UserContext;
 import com.mcallzbl.user.enums.Gender;
 import com.mcallzbl.user.enums.UserStatus;
 import com.mcallzbl.user.mapper.UserMapper;
 import com.mcallzbl.user.pojo.entity.User;
+import com.mcallzbl.user.pojo.vo.UserVO;
 import com.mcallzbl.user.service.UserService;
 import com.mcallzbl.user.utils.UsernameGenerator;
 import lombok.RequiredArgsConstructor;
@@ -174,6 +176,53 @@ public class UserServiceImpl implements UserService {
     public boolean updateUser(User user) {
         int updateCount = userMapper.updateById(user);
         return updateCount > 0;
+    }
+
+    /**
+     * 获取当前登录用户信息并转换为VO
+     *
+     * @return 用户信息VO
+     * @throws BusinessException 如果用户未登录
+     */
+    @Override
+    public UserVO getCurrentUserVO() {
+        // 获取当前登录用户
+        User currentUser = UserContext.getCurrentUser();
+        if (currentUser == null) {
+            throw BusinessException.of("用户未登录");
+        }
+
+        // 转换为VO对象
+        return convertToUserVO(currentUser);
+    }
+
+    /**
+     * 将User实体转换为UserVO
+     *
+     * @param user 用户实体
+     * @return 用户VO
+     */
+    private UserVO convertToUserVO(User user) {
+        return UserVO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .nickname(user.getNickname())
+                .avatarUrl(user.getAvatarUrl())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
+                .status(user.getStatus())
+                .lastLoginTime(user.getLastLoginTime())
+                .lastLoginIp(user.getLastLoginIp())
+                .loginCount(user.getLoginCount())
+                .emailVerified(user.getEmailVerified())
+                .phoneVerified(user.getPhoneVerified() != null && user.getPhoneVerified() == 1)
+                .timezone(user.getTimezone())
+                .language(user.getLanguage())
+                .createdTime(user.getCreatedTime())
+                .updatedTime(user.getUpdatedTime())
+                .build();
     }
 
     /**
