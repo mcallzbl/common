@@ -6,6 +6,10 @@ import org.springframework.http.HttpStatus;
 
 /**
  * 业务异常类
+ *
+ * @author mcallzbl
+ * @version 1.0
+ * @since 2025/11/20
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -46,6 +50,27 @@ public class BusinessException extends RuntimeException {
         this.data = data;
     }
 
+    /**
+     * 创建业务异常（HTTP状态码 + 错误码 + 消息 + 原因异常）
+     */
+    public BusinessException(HttpStatus httpStatus, int code, String userFriendlyMessage, Throwable cause) {
+        super(userFriendlyMessage, cause);
+        this.httpStatus = httpStatus;
+        this.code = code;
+        this.userFriendlyMessage = userFriendlyMessage;
+    }
+
+    /**
+     * 创建业务异常（HTTP状态码 + 错误码 + 消息 + 原因异常 + 数据）
+     */
+    public BusinessException(HttpStatus httpStatus, int code, String userFriendlyMessage, Throwable cause, Object data) {
+        super(userFriendlyMessage, cause);
+        this.httpStatus = httpStatus;
+        this.code = code;
+        this.userFriendlyMessage = userFriendlyMessage;
+        this.data = data;
+    }
+
     public BusinessException(HttpStatus httpStatus, ResultCode resultCode) {
         super(resultCode.getMessage());
         this.httpStatus = httpStatus;
@@ -70,6 +95,16 @@ public class BusinessException extends RuntimeException {
      */
     public BusinessException(String message) {
         this(HttpStatus.OK, ResultCode.FAILED.getCode(), message);
+    }
+
+    /**
+     * 创建业务异常（自定义消息 + 原因异常，使用默认失败状态码）
+     */
+    public BusinessException(String message, Throwable cause) {
+        super(message, cause);
+        this.httpStatus = HttpStatus.OK;
+        this.code = ResultCode.FAILED.getCode();
+        this.userFriendlyMessage = message;
     }
 
     public BusinessException(ResultCode resultCode, Object data) {
@@ -244,5 +279,91 @@ public class BusinessException extends RuntimeException {
      */
     public static BusinessException of(String message, Object data) {
         return new BusinessException(HttpStatus.OK, ResultCode.FAILED.getCode(), message, data);
+    }
+
+    /**
+     * 创建业务异常（自定义消息 + 原因异常，使用默认失败状态码）
+     */
+    public static BusinessException of(String message, Throwable cause) {
+        return new BusinessException(message, cause);
+    }
+
+    /**
+     * 创建业务异常（HTTP状态码 + 错误码 + 消息 + 原因异常）
+     */
+    public static BusinessException of(HttpStatus httpStatus, int code, String message, Throwable cause) {
+        return new BusinessException(httpStatus, code, message, cause);
+    }
+
+    /**
+     * 创建业务异常（HTTP状态码 + 错误码 + 消息 + 原因异常 + 数据）
+     */
+    public static BusinessException of(HttpStatus httpStatus, int code, String message, Throwable cause, Object data) {
+        return new BusinessException(httpStatus, code, message, cause, data);
+    }
+
+    /**
+     * 创建业务异常（业务错误码 + 原因异常）
+     */
+    public static BusinessException of(ResultCode resultCode, Throwable cause) {
+        return new BusinessException(HttpStatus.OK, resultCode.getCode(), resultCode.getMessage(), cause);
+    }
+
+    /**
+     * 创建业务异常（业务错误码 + 自定义消息 + 原因异常）
+     */
+    public static BusinessException of(ResultCode resultCode, String message, Throwable cause) {
+        return new BusinessException(HttpStatus.OK, resultCode.getCode(), message, cause);
+    }
+
+    /**
+     * 创建业务异常（业务错误码 + 自定义消息 + 原因异常 + 数据）
+     */
+    public static BusinessException of(ResultCode resultCode, String message, Throwable cause, Object data) {
+        return new BusinessException(HttpStatus.OK, resultCode.getCode(), message, cause, data);
+    }
+
+    // ==================== 支持异常链的静态工厂方法 ====================
+
+    /**
+     * 创建参数校验失败异常（带原因异常）
+     */
+    public static BusinessException validationFailed(String message, Throwable cause) {
+        return new BusinessException(HttpStatus.BAD_REQUEST, ResultCode.VALIDATION_FAILED.getCode(), message, cause);
+    }
+
+    /**
+     * 创建未授权异常（带原因异常）
+     */
+    public static BusinessException unauthorized(String message, Throwable cause) {
+        return new BusinessException(HttpStatus.UNAUTHORIZED, ResultCode.UNAUTHORIZED.getCode(), message, cause);
+    }
+
+    /**
+     * 创建权限不足异常（带原因异常）
+     */
+    public static BusinessException forbidden(String message, Throwable cause) {
+        return new BusinessException(HttpStatus.FORBIDDEN, ResultCode.FORBIDDEN.getCode(), message, cause);
+    }
+
+    /**
+     * 创建资源不存在异常（带原因异常）
+     */
+    public static BusinessException notFound(String message, Throwable cause) {
+        return new BusinessException(HttpStatus.NOT_FOUND, ResultCode.NOT_FOUND.getCode(), message, cause);
+    }
+
+    /**
+     * 创建业务错误异常（带原因异常）
+     */
+    public static BusinessException businessError(String message, Throwable cause) {
+        return new BusinessException(HttpStatus.OK, ResultCode.BUSINESS_ERROR.getCode(), message, cause);
+    }
+
+    /**
+     * 创建系统繁忙异常（带原因异常）
+     */
+    public static BusinessException systemBusy(String message, Throwable cause) {
+        return new BusinessException(HttpStatus.SERVICE_UNAVAILABLE, ResultCode.SYSTEM_BUSY.getCode(), message, cause);
     }
 }
